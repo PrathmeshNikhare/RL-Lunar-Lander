@@ -1,0 +1,10 @@
+# Runtime dependencies for the Lunar Lander reward-engineering project.
+# Target: Windows 11, Python 3.12 (see docs/setup-windows.md).
+# Ranges allow compatible updates within the major version that was verified.
+# Exact versions tested in Phase 00 are recorded in requirements-lock.txt.
+
+gymnasium[box2d]>=1.4,<2      # LunarLander-v3; extra pulls Box2D wheel + pygame-ce
+stable-baselines3>=2.9,<3     # PPO / MlpPolicy
+torch>=2.15,<3                # SB3 backend; PyPI Windows wheel is CPU-only
+tensorboard>=2.21,<3          # training curves
+matplotlib>=3.11,<4           # comparison plots

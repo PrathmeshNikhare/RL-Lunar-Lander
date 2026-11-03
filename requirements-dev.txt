@@ -1,0 +1,6 @@
+# Development and test tooling. Installs runtime dependencies as well.
+-r requirements.txt
+
+pytest>=9.2,<10
+ruff>=0.17,<0.18              # pre-1.0: minor releases may change rule behaviour
+mypy>=2.4,<3
