@@ -1,0 +1,44 @@
+# Phase 04 experiment B: original reward minus a constant per-step time cost.
+# Identical to configs/baseline.yaml except experiment_id and reward
+# (enforced by tests/test_experiment_configs.py). Rationale for the value:
+# docs/reward-experiments.md. Not policy-invariant (docs/reward-wrapper.md).
+
+experiment_id: time_penalty
+
+environment:
+  id: LunarLander-v3
+
+reward:
+  mode: time_penalty
+  coefficient: 0.05     # ~13% of the baseline's mean non-terminal step reward (~0.37)
+
+training:
+  total_timesteps: 1000000
+  seed: 42            # vectorised env i is seeded with seed + i
+  n_envs: 16          # DummyVecEnv (in-process)
+  checkpoint_freq: 100000   # total env timesteps between checkpoints; 0 disables
+  device: cpu
+
+ppo:
+  policy: MlpPolicy
+  net_arch: [64, 64]
+  learning_rate: 0.0003   # SB3 default
+  n_steps: 1024
+  batch_size: 64
+  n_epochs: 4
+  gamma: 0.999
+  gae_lambda: 0.98
+  clip_range: 0.2         # SB3 default
+  ent_coef: 0.01
+  vf_coef: 0.5            # SB3 default
+  max_grad_norm: 0.5      # SB3 default
+
+evaluation:
+  episodes: 100
+  deterministic: true
+  seed_start: 10000   # disjoint from training seeds 42..57
+
+video:
+  episodes: 3
+  deterministic: true
+  seed_start: 20000

@@ -109,6 +109,8 @@ runs/<experiment_id>/<YYYYmmddTHHMMSSZ>_seed<N>/
   (D-019); there is no separate reward-level `gamma`.
 - **Reward modes:** the `reward` section selects one of four modes. See
   `docs/reward-wrapper.md` for the keys, formulas and logging.
+- **Phase 04 experiments:** the four configs, chosen values, seeds and run
+  commands are in `docs/reward-experiments.md`.
 
 ### Seeds
 | Purpose | Seeds |
