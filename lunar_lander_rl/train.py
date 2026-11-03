@@ -8,6 +8,8 @@ Each call to :func:`train` creates a new run directory and writes:
 - ``config.json``: the effective configuration, written before training starts;
 - ``monitor/<rank>.monitor.csv``: per-episode training returns and lengths,
   using the environment's original reward;
+- ``reward_components.csv``: per-episode original reward, each custom reward
+  component and the shaped total (``lunar_lander_rl.reward_logging``);
 - ``tensorboard/``: SB3 training scalars;
 - ``checkpoints/``: periodic model snapshots, if enabled;
 - ``model.zip``: the final model;
@@ -26,6 +28,7 @@ first reset; later auto-resets draw from each environment's own RNG.
 
 from __future__ import annotations
 
+import functools
 import time
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -35,7 +38,7 @@ from typing import Any, Final
 
 import torch
 from stable_baselines3 import PPO
-from stable_baselines3.common.callbacks import CheckpointCallback
+from stable_baselines3.common.callbacks import BaseCallback, CheckpointCallback
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv, VecEnv
 
@@ -45,6 +48,7 @@ from lunar_lander_rl.artifacts import (
     METADATA_FILENAME,
     MODEL_FILENAME,
     MONITOR_SUBDIR,
+    REWARD_COMPONENTS_FILENAME,
     TENSORBOARD_SUBDIR,
     create_run_dir,
     environment_metadata,
@@ -52,6 +56,8 @@ from lunar_lander_rl.artifacts import (
 )
 from lunar_lander_rl.config import ExperimentConfig
 from lunar_lander_rl.environment import make_env
+from lunar_lander_rl.reward_logging import RewardComponentsLogger
+from lunar_lander_rl.reward_wrapper import RewardComponentsWrapper
 
 TENSORBOARD_RUN_NAME: Final[str] = "ppo"
 CHECKPOINT_PREFIX: Final[str] = "ppo"
@@ -87,21 +93,20 @@ class TrainingResult:
 def build_vec_env(config: ExperimentConfig, monitor_dir: Path | None) -> VecEnv:
     """Create the in-process vectorised training environment.
 
-    Phase 03 seam: reward wrappers must be passed to ``make_vec_env`` as
-    ``wrapper_class``. SB3 applies ``wrapper_class`` *outside* ``Monitor``, so
-    ``monitor/*.csv`` keeps logging the original environment reward, and the
-    shaped reward is logged separately. Wrapping inside the env factory
-    would silently make Monitor log the shaped reward.
+    Every mode, including ``original``, is wrapped by
+    ``RewardComponentsWrapper``. It is passed to ``make_vec_env`` as
+    ``wrapper_class``, which SB3 applies *outside* ``Monitor``, so
+    ``monitor/*.csv`` keeps logging the original environment reward. Wrapping
+    inside the env factory would silently make Monitor log the shaped reward.
     """
-    if config.reward.mode != "original":
-        raise NotImplementedError(
-            f"reward mode {config.reward.mode!r} is not implemented"
-        )
     return make_vec_env(
         make_env,
         n_envs=config.training.n_envs,
         seed=config.training.seed,
         monitor_dir=None if monitor_dir is None else str(monitor_dir),
+        wrapper_class=functools.partial(
+            RewardComponentsWrapper, reward=config.reward, gamma=config.ppo.gamma
+        ),
         vec_env_cls=DummyVecEnv,
     )
 
@@ -171,22 +176,27 @@ def train(
     hyperparameters: dict[str, Any] | None = None
     model_path = run_dir / MODEL_FILENAME
     env: VecEnv | None = None
+    reward_logger = RewardComponentsLogger(
+        run_dir / REWARD_COMPONENTS_FILENAME, config.reward
+    )
     try:
         env = build_vec_env(config, run_dir / MONITOR_SUBDIR)
         model = build_model(config, env, run_dir / TENSORBOARD_SUBDIR, verbose=verbose)
         hyperparameters = effective_hyperparameters(model)
-        callback = None
+        callbacks: list[BaseCallback] = [reward_logger]
         if config.training.checkpoint_freq > 0:
-            callback = CheckpointCallback(
-                # The callback counts vectorised steps, each = n_envs timesteps;
-                # config validation guarantees an exact division.
-                save_freq=config.training.checkpoint_freq // config.training.n_envs,
-                save_path=str(run_dir / CHECKPOINTS_SUBDIR),
-                name_prefix=CHECKPOINT_PREFIX,
+            callbacks.append(
+                CheckpointCallback(
+                    # The callback counts vectorised steps, each = n_envs timesteps;
+                    # config validation guarantees an exact division.
+                    save_freq=config.training.checkpoint_freq // config.training.n_envs,
+                    save_path=str(run_dir / CHECKPOINTS_SUBDIR),
+                    name_prefix=CHECKPOINT_PREFIX,
+                )
             )
         model.learn(
             total_timesteps=config.training.total_timesteps,
-            callback=callback,
+            callback=callbacks,
             tb_log_name=TENSORBOARD_RUN_NAME,
         )
         model.save(model_path)
@@ -196,6 +206,7 @@ def train(
         status = "interrupted"
         raise
     finally:
+        reward_logger.close()
         if env is not None:
             env.close()
         duration = time.perf_counter() - start

@@ -81,7 +81,10 @@ runs/<experiment_id>/<YYYYmmddTHHMMSSZ>_seed<N>/
                               git revision at launch (commit, dirty, diff_sha256, untracked)
   model.zip                   final model
   monitor/<rank>.monitor.csv  per-episode training return/length (original reward)
-  tensorboard/ppo_1/          SB3 scalars:  tensorboard --logdir runs
+  reward_components.csv       per training episode: timesteps, env_rank, length,
+                              original, each custom component, total (shaped)
+  tensorboard/ppo_1/          SB3 scalars (+ reward/<component> means):
+                              tensorboard --logdir runs
   checkpoints/ppo_<steps>_steps.zip
   evaluations/<timestamp>/    episodes.csv, summary.json
   videos/<timestamp>/         episodes.csv, summary.json, mp4/*.mp4
@@ -102,8 +105,10 @@ runs/<experiment_id>/<YYYYmmddTHHMMSSZ>_seed<N>/
   - 1e6 timesteps.
 - **Other values:** SB3 2.9.2 defaults, written out explicitly.
 - **Network:** `net_arch [64, 64]` (D-007).
-- **Discount coupling:** Phase 03's potential-based shaping must use the same
-  `gamma` (D-019).
+- **Discount coupling:** potential-based shaping always uses `ppo.gamma`
+  (D-019); there is no separate reward-level `gamma`.
+- **Reward modes:** the `reward` section selects one of four modes. See
+  `docs/reward-wrapper.md` for the keys, formulas and logging.
 
 ### Seeds
 | Purpose | Seeds |

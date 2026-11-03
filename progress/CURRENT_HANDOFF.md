@@ -12,13 +12,19 @@
 - **Committed copies:** `results/baseline/`. Write-up:
   `experiments/records/2026-11-03-baseline-seed42.md`.
 
-Full record: `progress/handoffs/2026-11-03-phase-02.md`.
+- **Phase 03** (reward wrapper) is implemented and verified: four reward
+  modes, pure reward functions, `RewardComponentsWrapper`, per-episode
+  component logging. 202 tests pass. Committed locally as "Phase 03: reward
+  wrapper". Nothing is pushed.
+
+Full records: `progress/handoffs/2026-11-03-phase-02.md`,
+`progress/handoffs/2026-11-04-phase-03.md`.
 
 ## Current phase
-`03-reward-wrapper`: not started. Phases 00–02 are complete.
+`04-reward-experiments`: not started. Phases 00–03 are complete.
 
 ## Next safe action
-1. Run `/start-phase 03-reward-wrapper` and present the plan only.
+1. Run `/start-phase 04-reward-experiments` and present the plan only.
 2. Wait for explicit user approval before editing.
 
 ## Environment notes
@@ -40,12 +46,12 @@ Full record: `progress/handoffs/2026-11-03-phase-02.md`.
   - `angle` is not wrapped;
   - there is no termination at the top of the screen or for height;
   - seeding also drives the terrain and per-step engine dispersion.
-- For Phase 03 (from the Phase 02 reviews):
-  - add reward wrappers through `make_vec_env(wrapper_class=...)` so
-    `Monitor` keeps logging the original reward;
-  - log the shaped return separately;
-  - the potential's γ must equal `ppo.gamma` (D-019);
-  - the evaluation code reads only its own config section (D-020).
+- Reward modes, formulas, terminal handling and logging:
+  `docs/reward-wrapper.md`. γ for shaping is always `ppo.gamma` (D-019).
+- For Phase 04: choose and justify reward magnitudes (relative to the
+  environment's built-in shaping and typical step rewards); write the four
+  experiment configs; check behaviour with videos and metrics, and do not
+  assume hovering emerges.
 
 ## Constraints
 - Windows 11, PowerShell, Python 3.12.

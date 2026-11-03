@@ -53,3 +53,50 @@ def smoke_run(
     return train(
         smoke_config, runs_root, argv=["pytest-smoke"], timestamp=SMOKE_TIMESTAMP
     )
+
+
+# Placeholder reward parameters for tests only; Phase 04 chooses real values.
+TEST_REWARDS: dict[str, dict[str, Any]] = {
+    "original": {"mode": "original"},
+    "time_penalty": {"mode": "time_penalty", "coefficient": 0.01},
+    "upright_slow_bonus": {
+        "mode": "upright_slow_bonus",
+        "bonus": 1.0,
+        "max_abs_angle": 0.1,
+        "max_speed": 0.1,
+    },
+    "potential_based": {
+        "mode": "potential_based",
+        "alpha": 1.0,
+        "distance_weight": 1.0,
+        "speed_weight": 1.0,
+        "angle_weight": 1.0,
+    },
+}
+
+
+def smoke_config_with_reward(
+    smoke_config: ExperimentConfig, mode: str, **training: Any
+) -> ExperimentConfig:
+    """``smoke_config`` with another reward mode (and optional training overrides)."""
+    data = smoke_config.to_dict()
+    data["experiment_id"] = f"smoke-{mode.replace('_', '-')}"
+    data["reward"] = copy.deepcopy(TEST_REWARDS[mode])
+    data["training"].update(training)
+    return ExperimentConfig.from_dict(data)
+
+
+@pytest.fixture(scope="session")
+def shaped_smoke_run(
+    smoke_config: ExperimentConfig, tmp_path_factory: pytest.TempPathFactory
+) -> TrainingResult:
+    """A potential-shaping run long enough (4 rollouts) for episodes to finish."""
+    config = smoke_config_with_reward(
+        smoke_config, "potential_based", total_timesteps=512, checkpoint_freq=0
+    )
+    return train(
+        config,
+        tmp_path_factory.mktemp("shaped-runs"),
+        argv=["pytest-shaped-smoke"],
+        timestamp=SMOKE_TIMESTAMP,
+    )

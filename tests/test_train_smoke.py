@@ -2,13 +2,20 @@
 
 from __future__ import annotations
 
+import csv
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import pytest
 import torch
+from conftest import smoke_config_with_reward
 from stable_baselines3 import PPO
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.vec_env import DummyVecEnv
+from tensorboard.backend.event_processing.event_accumulator import (  # type: ignore[import-untyped]
+    EventAccumulator,
+)
 
 from lunar_lander_rl.artifacts import read_json
 from lunar_lander_rl.config import ExperimentConfig
@@ -33,7 +40,7 @@ def test_run_directory_contains_expected_artifacts(
 ) -> None:
     run_dir = smoke_run.run_dir
     assert run_dir.name.endswith(f"_seed{smoke_config.training.seed}")
-    for name in ("config.json", "metadata.json", "model.zip"):
+    for name in ("config.json", "metadata.json", "model.zip", "reward_components.csv"):
         assert (run_dir / name).is_file(), name
     assert sorted(p.name for p in (run_dir / "monitor").glob("*.monitor.csv")) == [
         f"{rank}.monitor.csv" for rank in range(smoke_config.training.n_envs)
@@ -180,3 +187,91 @@ def test_environment_build_failure_still_writes_metadata(
     meta = read_json(run_dir / "metadata.json")
     assert meta["status"] == "failed"
     assert meta["effective_hyperparameters"] is None
+
+
+# --------------------------------------------------------------------------- #
+# Reward wrapper integration (Phase 03)
+# --------------------------------------------------------------------------- #
+
+
+def _read_csv(path: Path) -> list[dict[str, str]]:
+    with path.open(encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def _monitor_returns(run_dir: Path, n_envs: int) -> dict[int, list[float]]:
+    returns = {}
+    for rank in range(n_envs):
+        with (run_dir / "monitor" / f"{rank}.monitor.csv").open(encoding="utf-8") as f:
+            next(f)  # JSON header line
+            returns[rank] = [float(row["r"]) for row in csv.DictReader(f)]
+    return returns
+
+
+def test_wrapped_original_mode_trains_identically_to_unwrapped_env(
+    smoke_config: ExperimentConfig,
+) -> None:
+    """Baseline mode is exactly the original reward, end to end through PPO."""
+    unwrapped = make_vec_env(
+        make_env,
+        n_envs=smoke_config.training.n_envs,
+        seed=smoke_config.training.seed,
+        vec_env_cls=DummyVecEnv,
+    )
+    wrapped = build_vec_env(smoke_config, monitor_dir=None)
+    models = []
+    try:
+        for env in (unwrapped, wrapped):
+            model = build_model(smoke_config, env, tensorboard_dir=None)
+            model.learn(total_timesteps=smoke_config.training.total_timesteps)
+            models.append(model)
+    finally:
+        unwrapped.close()
+        wrapped.close()
+    first, second = (m.policy.state_dict() for m in models)
+    assert first.keys() == second.keys()
+    for key in first:
+        torch.testing.assert_close(first[key], second[key], rtol=0, atol=0)
+
+
+def test_shaped_run_logs_components_and_monitor_keeps_original_reward(
+    shaped_smoke_run: TrainingResult,
+) -> None:
+    run_dir = shaped_smoke_run.run_dir
+    config = ExperimentConfig.from_dict(read_json(run_dir / "config.json"))
+    assert config.reward.mode == "potential_based"
+    rows = _read_csv(run_dir / "reward_components.csv")
+    assert rows, "expected at least one finished training episode"
+    assert list(rows[0]) == [
+        "timesteps",
+        "env_rank",
+        "length",
+        "original",
+        "potential_shaping",
+        "total",
+    ]
+    for row in rows:
+        assert float(row["total"]) == pytest.approx(
+            float(row["original"]) + float(row["potential_shaping"])
+        )
+    # Each Monitor episode (original reward) matches the wrapper's "original".
+    monitor = _monitor_returns(run_dir, config.training.n_envs)
+    for rank in range(config.training.n_envs):
+        logged = [float(r["original"]) for r in rows if int(r["env_rank"]) == rank]
+        assert monitor[rank] == pytest.approx(logged, abs=1e-5)
+    events = EventAccumulator(str(next((run_dir / "tensorboard").iterdir())))
+    events.Reload()
+    tags = set(events.Tags()["scalars"])
+    assert {"reward/original", "reward/potential_shaping", "reward/total"} <= tags
+
+
+@pytest.mark.parametrize("mode", ["time_penalty", "upright_slow_bonus"])
+def test_each_shaped_mode_trains(
+    smoke_config: ExperimentConfig, tmp_path: Path, mode: str
+) -> None:
+    config = smoke_config_with_reward(smoke_config, mode, checkpoint_freq=0)
+    result = train(config, tmp_path, timestamp="mode-smoke")
+    assert read_json(result.run_dir / "metadata.json")["status"] == "completed"
+    with (result.run_dir / "reward_components.csv").open(encoding="utf-8") as handle:
+        header = next(csv.reader(handle))
+    assert header == ["timesteps", "env_rank", "length", "original", mode, "total"]

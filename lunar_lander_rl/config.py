@@ -18,17 +18,23 @@ JSON by ``lunar_lander_rl.artifacts``. It can be reloaded with
 from __future__ import annotations
 
 import dataclasses
+import math
 import re
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Final
+from typing import Any, Final, Literal
 
 import yaml
 
 from lunar_lander_rl.environment import ENV_ID
 
-SUPPORTED_REWARD_MODES: Final[tuple[str, ...]] = ("original",)  # Phase 03 extends this
+SUPPORTED_REWARD_MODES: Final[tuple[str, ...]] = (
+    "original",
+    "time_penalty",
+    "upright_slow_bonus",
+    "potential_based",
+)
 SUPPORTED_POLICIES: Final[tuple[str, ...]] = ("MlpPolicy",)
 SUPPORTED_DEVICES: Final[tuple[str, ...]] = ("cpu",)  # no GPU dependency (CLAUDE.md)
 _EXPERIMENT_ID_PATTERN: Final = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
@@ -43,9 +49,59 @@ class EnvironmentConfig:
     id: str
 
 
+# Reward configurations, one per mode. Formulas, units and terminal handling
+# are documented in docs/reward-wrapper.md. ``mode`` is first so that the
+# saved JSON reads naturally; it is fixed per class, not an __init__ argument.
+
+
 @dataclass(frozen=True)
-class RewardConfig:
-    mode: str
+class OriginalReward:
+    """The unmodified environment reward (no custom components)."""
+
+    mode: Literal["original"] = field(default="original", init=False)
+
+
+@dataclass(frozen=True)
+class TimePenaltyReward:
+    """Subtract ``coefficient`` on every step."""
+
+    mode: Literal["time_penalty"] = field(default="time_penalty", init=False)
+    coefficient: float
+
+
+@dataclass(frozen=True)
+class UprightSlowBonusReward:
+    """Add ``bonus`` on every step whose next observation is upright and slow.
+
+    ``max_abs_angle`` is in radians (angle wrapped to [-pi, pi]); ``max_speed``
+    is the norm of (vx, vy) in scaled observation units.
+    """
+
+    mode: Literal["upright_slow_bonus"] = field(
+        default="upright_slow_bonus", init=False
+    )
+    bonus: float
+    max_abs_angle: float
+    max_speed: float
+
+
+@dataclass(frozen=True)
+class PotentialShapingReward:
+    """Potential-based shaping ``alpha * (gamma * Phi(s') - Phi(s))``.
+
+    ``gamma`` is not configured here: it is always ``ppo.gamma`` (D-019).
+    """
+
+    mode: Literal["potential_based"] = field(default="potential_based", init=False)
+    alpha: float
+    distance_weight: float
+    speed_weight: float
+    angle_weight: float
+
+
+RewardConfig = (
+    OriginalReward | TimePenaltyReward | UprightSlowBonusReward | PotentialShapingReward
+)
 
 
 @dataclass(frozen=True)
@@ -181,6 +237,8 @@ def _float(
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise ConfigError(f"{where}.{key}: expected a number, got {value!r}")
     number = float(value)
+    if not math.isfinite(number):  # YAML accepts .nan / .inf
+        raise ConfigError(f"{where}.{key}: must be finite, got {number}")
     if greater_than is not None and not number > greater_than:
         raise ConfigError(f"{where}.{key}: must be > {greater_than}, got {number}")
     if at_least is not None and number < at_least:
@@ -236,6 +294,52 @@ def parse_episode_set(value: Any, where: str) -> EpisodeSetConfig:
     )
 
 
+def _parse_reward(value: Any) -> RewardConfig:
+    """Validate the ``reward`` section; each mode has its own required keys."""
+    if not isinstance(value, Mapping):
+        raise ConfigError(f"reward: expected a mapping, got {type(value).__name__}")
+    if "mode" not in value:
+        raise ConfigError("reward: missing key(s) ['mode']")
+    mode = _choice(value, "mode", "reward", SUPPORTED_REWARD_MODES)
+    where = "reward"
+    if mode == "original":
+        _mapping(value, where, ("mode",))
+        return OriginalReward()
+    if mode == "time_penalty":
+        data = _mapping(value, where, ("mode", "coefficient"))
+        return TimePenaltyReward(
+            coefficient=_float(data, "coefficient", where, greater_than=0.0)
+        )
+    if mode == "upright_slow_bonus":
+        data = _mapping(value, where, ("mode", "bonus", "max_abs_angle", "max_speed"))
+        return UprightSlowBonusReward(
+            bonus=_float(data, "bonus", where, greater_than=0.0),
+            # The angle is wrapped to [-pi, pi], so larger limits are meaningless.
+            max_abs_angle=_float(
+                data, "max_abs_angle", where, greater_than=0.0, at_most=math.pi
+            ),
+            max_speed=_float(data, "max_speed", where, greater_than=0.0),
+        )
+    if mode != "potential_based":  # SUPPORTED_REWARD_MODES and this parser drifted
+        raise AssertionError(f"unhandled reward mode {mode!r}")
+    data = _mapping(
+        value,
+        where,
+        ("mode", "alpha", "distance_weight", "speed_weight", "angle_weight"),
+    )
+    weights = {
+        key: _float(data, key, where, at_least=0.0)
+        for key in ("distance_weight", "speed_weight", "angle_weight")
+    }
+    if not any(weights.values()):
+        raise ConfigError(
+            f"{where}: at least one potential weight must be > 0, got {weights}"
+        )
+    return PotentialShapingReward(
+        alpha=_float(data, "alpha", where, greater_than=0.0), **weights
+    )
+
+
 def _parse_experiment(value: Any) -> ExperimentConfig:
     root = _mapping(
         value,
@@ -266,10 +370,7 @@ def _parse_experiment(value: Any) -> ExperimentConfig:
         id=_choice(env_data, "id", "environment", (ENV_ID,))
     )
 
-    reward_data = _mapping(root["reward"], "reward", ("mode",))
-    reward = RewardConfig(
-        mode=_choice(reward_data, "mode", "reward", SUPPORTED_REWARD_MODES)
-    )
+    reward = _parse_reward(root["reward"])
 
     t = _mapping(
         root["training"],

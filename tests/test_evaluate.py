@@ -214,12 +214,18 @@ def test_evaluate_run_writes_session_and_never_overwrites(
         evaluate_run(smoke_run.run_dir, timestamp="eval-test")
 
 
+@pytest.mark.parametrize("run_fixture", ["smoke_run", "shaped_smoke_run"])
 def test_evaluate_run_matches_independent_model_rollout(
-    smoke_run: TrainingResult,
+    run_fixture: str, request: pytest.FixtureRequest
 ) -> None:
-    """Trained-model returns equal a rollout on a raw ``gym.make`` env."""
-    session = evaluate_run(smoke_run.run_dir, episodes=2, timestamp="eval-reference")
-    model = PPO.load(smoke_run.model_path, device="cpu")
+    """Trained-model returns equal a rollout on a raw ``gym.make`` env.
+
+    ``shaped_smoke_run`` was trained with potential shaping: evaluation must
+    still report the original environment reward only.
+    """
+    run: TrainingResult = request.getfixturevalue(run_fixture)
+    session = evaluate_run(run.run_dir, episodes=2, timestamp="eval-reference")
+    model = PPO.load(run.model_path, device="cpu")
     for row in _read_rows(session):
         env = gym.make(ENV_ID)
         try:

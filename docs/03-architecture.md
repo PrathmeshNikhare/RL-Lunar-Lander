@@ -12,6 +12,7 @@ plots. Video recording is an evaluation concern, not a training concern.
 - `environment.py`: environment construction and seeding.
 - `reward_functions.py`: pure reward/potential calculations.
 - `reward_wrapper.py`: Gymnasium wrapper and reward-component accounting.
+- `reward_logging.py`: training callback that logs per-episode reward components.
 - `train.py`: configuration-driven PPO training.
 - `evaluate.py`: policy evaluation using original environment reward.
 - `record_video.py`: record selected evaluation episodes.

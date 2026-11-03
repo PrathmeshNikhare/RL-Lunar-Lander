@@ -71,7 +71,7 @@ def test_overrides_apply_and_are_revalidated() -> None:
         (("experiment_id",), "../escape", "experiment_id"),
         (("experiment_id",), "Baseline", "experiment_id"),
         (("environment", "id"), "CartPole-v1", "environment.id"),
-        (("reward", "mode"), "time_penalty", "reward.mode"),
+        (("reward", "mode"), "bogus", "reward.mode"),
         (("training", "total_timesteps"), 0, "total_timesteps"),
         (("training", "total_timesteps"), 1.5, "total_timesteps"),
         (("training", "seed"), -1, "seed"),
@@ -172,3 +172,107 @@ def test_missing_file_and_invalid_yaml(tmp_path: Path) -> None:
     broken.write_text("training: [unclosed\n", encoding="utf-8")
     with pytest.raises(ConfigError, match="invalid YAML"):
         load_config(broken)
+
+
+# --------------------------------------------------------------------------- #
+# Reward section (one schema per mode)
+# --------------------------------------------------------------------------- #
+
+VALID_REWARDS: dict[str, dict[str, Any]] = {
+    "original": {"mode": "original"},
+    "time_penalty": {"mode": "time_penalty", "coefficient": 0.01},
+    "upright_slow_bonus": {
+        "mode": "upright_slow_bonus",
+        "bonus": 1.0,
+        "max_abs_angle": 0.1,
+        "max_speed": 0.1,
+    },
+    "potential_based": {
+        "mode": "potential_based",
+        "alpha": 1.0,
+        "distance_weight": 1.0,
+        "speed_weight": 0.5,
+        "angle_weight": 0.0,
+    },
+}
+
+
+@pytest.mark.parametrize("mode", sorted(VALID_REWARDS))
+def test_each_reward_mode_parses_and_round_trips(
+    config_dict: dict[str, Any], mode: str
+) -> None:
+    config_dict["reward"] = VALID_REWARDS[mode]
+    config = ExperimentConfig.from_dict(config_dict)
+    assert config.reward.mode == mode
+    assert config.to_dict()["reward"] == VALID_REWARDS[mode]
+    assert ExperimentConfig.from_dict(json.loads(json.dumps(config.to_dict()))) == (
+        config
+    )
+
+
+def test_potential_shaping_has_no_separate_gamma(config_dict: dict[str, Any]) -> None:
+    # gamma always comes from ppo.gamma (D-019); a reward-level gamma is rejected.
+    config_dict["reward"] = {**VALID_REWARDS["potential_based"], "gamma": 0.99}
+    with pytest.raises(ConfigError, match=r"unknown key\(s\) \['gamma'\]"):
+        ExperimentConfig.from_dict(config_dict)
+
+
+@pytest.mark.parametrize(
+    ("mode", "key", "value", "message"),
+    [
+        ("time_penalty", "coefficient", 0.0, "must be > 0"),
+        ("time_penalty", "coefficient", -0.01, "must be > 0"),
+        ("time_penalty", "coefficient", True, "expected a number"),
+        ("time_penalty", "coefficient", float("nan"), "must be finite"),
+        ("time_penalty", "coefficient", float("inf"), "must be finite"),
+        ("upright_slow_bonus", "bonus", 0.0, "must be > 0"),
+        ("upright_slow_bonus", "max_abs_angle", 0.0, "must be > 0"),
+        ("upright_slow_bonus", "max_abs_angle", 3.2, "must be <= 3.14159"),
+        ("upright_slow_bonus", "max_speed", -1.0, "must be > 0"),
+        ("upright_slow_bonus", "max_speed", "fast", "expected a number"),
+        ("potential_based", "alpha", 0.0, "must be > 0"),
+        ("potential_based", "distance_weight", -1.0, "must be >= 0"),
+        ("potential_based", "angle_weight", float("nan"), "must be finite"),
+    ],
+)
+def test_invalid_reward_values_are_rejected(
+    config_dict: dict[str, Any], mode: str, key: str, value: Any, message: str
+) -> None:
+    config_dict["reward"] = {**VALID_REWARDS[mode], key: value}
+    with pytest.raises(ConfigError, match=f"reward.{key}: {message}"):
+        ExperimentConfig.from_dict(config_dict)
+
+
+def test_potential_needs_a_positive_weight(config_dict: dict[str, Any]) -> None:
+    config_dict["reward"] = {
+        **VALID_REWARDS["potential_based"],
+        "distance_weight": 0.0,
+        "speed_weight": 0.0,
+        "angle_weight": 0.0,
+    }
+    with pytest.raises(ConfigError, match="at least one potential weight"):
+        ExperimentConfig.from_dict(config_dict)
+
+
+@pytest.mark.parametrize(
+    ("reward", "message"),
+    [
+        ({}, r"missing key\(s\) \['mode'\]"),
+        ({"mode": "time_penalty"}, r"missing key\(s\) \['coefficient'\]"),
+        (
+            {"mode": "original", "coefficient": 0.01},
+            r"unknown key\(s\) \['coefficient'\]",
+        ),
+        (
+            {**VALID_REWARDS["time_penalty"], "bonus": 1.0},
+            r"unknown key\(s\) \['bonus'\]",
+        ),
+        ("original", "reward: expected a mapping"),
+    ],
+)
+def test_reward_keys_must_match_the_mode(
+    config_dict: dict[str, Any], reward: Any, message: str
+) -> None:
+    config_dict["reward"] = reward
+    with pytest.raises(ConfigError, match=message):
+        ExperimentConfig.from_dict(config_dict)

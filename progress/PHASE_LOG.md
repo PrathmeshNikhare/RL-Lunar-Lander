@@ -109,3 +109,23 @@ For each phase, append:
 - **Git checkpoint:** `0f125a5` "Phase 02 (1/2)" (code), then "Phase 02 (2/2)"
   (results, record, progress). Both are local commits on `main`, not pushed.
 - **Handoff:** `progress/handoffs/2026-11-03-phase-02.md`
+
+---
+
+## 2026-11-04 — 03-reward-wrapper
+
+- **Plan approval:** The user approved the plan with all six recommended
+  decisions ("approve"): D-025 to D-030.
+- **Files changed:** see `progress/handoffs/2026-11-04-phase-03.md` (three new
+  modules, config/train changes, four test files new or extended, reward
+  docs, progress files).
+- **Checks:** pytest 202 passed (~15 s); ruff and `mypy --strict` clean. No
+  long training (largest test run: 2,048 steps).
+- **Specialist review:** Reward Engineer REVISE (M1 angle clipping, fixed;
+  L1–L4 documented). Test Engineer REVISE (M1–M3 and L4/L5/L7 fixed; L6, L8,
+  L9 accepted). Architecture Reviewer ACCEPT (L1–L5 applied).
+- **Acceptance decision:** Accepted. All acceptance criteria are evidenced,
+  and the user approved the checkpoint commit ("commit").
+- **Git checkpoint:** "Phase 03: reward wrapper" (local commit on `main`, not
+  pushed).
+- **Handoff:** `progress/handoffs/2026-11-04-phase-03.md`
