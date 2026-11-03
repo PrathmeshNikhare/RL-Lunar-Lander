@@ -77,3 +77,35 @@ For each phase, append:
 - **Git checkpoint:** "Phase 01: environment exploration" (local commit on
   `main`, not pushed).
 - **Handoff:** `progress/handoffs/2026-11-03-phase-01.md`
+
+---
+
+## 2026-11-03 — 02-baseline-ppo
+
+- **Plan approval:** The user approved the plan as presented ("approve"):
+  - RL Zoo hyperparameters (D-017);
+  - YAML (D-022);
+  - moviepy (D-021);
+  - full run in this phase (D-018).
+
+  The user then approved the full run ("run it"). After the reviews, they
+  chose "Commit, then re-run" for the official baseline (D-023).
+- **Files changed:** see `progress/handoffs/2026-11-03-phase-02.md` (package
+  modules, scripts, config, tests, docs, requirements, `results/baseline/`,
+  experiment record, progress files).
+- **Checks:**
+  - pytest 123 passed; ruff and `mypy --strict` clean; `pip check` clean.
+  - Timing run: 32,768 steps in 10.4 s.
+  - Official 1M run from `0f125a5`: 1,015,808 steps in 259.4 s, status
+    completed, `dirty: false`.
+  - Evaluation: 100 episodes, mean original return 237.56, sample std 52.37,
+    92/100 ≥ 200.
+  - 3 videos recorded.
+- **Specialist review:** RL Engineer, Architecture Reviewer and Test Engineer
+  all recommended REVISE (minor/light). All required fixes were applied and
+  are covered by new tests. Accepted remainders are listed in the handoff.
+- **Acceptance decision:** Accepted. All acceptance criteria are evidenced,
+  and the user approved the checkpoint commit ("commit").
+- **Git checkpoint:** `0f125a5` "Phase 02 (1/2)" (code), then "Phase 02 (2/2)"
+  (results, record, progress). Both are local commits on `main`, not pushed.
+- **Handoff:** `progress/handoffs/2026-11-03-phase-02.md`
