@@ -38,3 +38,42 @@ For each phase, append:
 - **Acceptance decision:** Accepted. All acceptance criteria are evidenced, and the user approved the checkpoint commit ("commit").
 - **Git checkpoint:** "Phase 00: foundation and local setup" (local commit on `main`, not pushed).
 - **Handoff:** `progress/handoffs/2026-11-03-phase-00.md`
+
+---
+
+## 2026-11-03 — 01-environment
+
+- **Plan approval:** The user approved the plan as presented ("approve"), with
+  the recommended defaults:
+  - root-level package, not installed (D-015);
+  - argparse parameters (D-016);
+  - the human-render check done by the user.
+
+  The user separately approved applying the RL Engineer doc fixes ("apply the
+  remaining doc fixes").
+- **Files changed:**
+  - `lunar_lander_rl/__init__.py`, `lunar_lander_rl/environment.py`,
+    `lunar_lander_rl/rollout.py`
+  - `scripts/random_rollout.py`
+  - `tests/test_environment.py`, `tests/test_random_rollout_cli.py`
+  - `docs/environment-notes.md`, `pytest.ini`
+  - `progress/*`
+- **Checks:**
+  - pytest: 37 passed (10 Phase 00 + 22 environment/rollout + 5 command-line).
+  - ruff check/format: clean.
+  - `mypy --strict`: clean on 8 files.
+  - Headless rollout of 3 episodes: exit 0, `terminated=True` after
+    66/99/106 steps.
+  - The user's manual human-render run: "The lander tumbled to the left once
+    and to the right once." Its output matched the headless run.
+  - `pip check`: clean.
+- **Specialist review:**
+  - RL Engineer: ACCEPT with doc revisions M1–M5. All were verified
+    independently and applied. N1 (negative `--seed`) is deferred.
+  - Test Engineer: ACCEPT with M1 recommended. M1 was added; L1–L5 and the
+    command-line smoke test were applied.
+- **Acceptance decision:** Accepted. All acceptance criteria are evidenced,
+  and the user approved the checkpoint commit ("commit").
+- **Git checkpoint:** "Phase 01: environment exploration" (local commit on
+  `main`, not pushed).
+- **Handoff:** `progress/handoffs/2026-11-03-phase-01.md`

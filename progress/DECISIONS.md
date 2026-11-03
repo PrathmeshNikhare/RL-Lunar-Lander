@@ -16,5 +16,7 @@
 | D-012 | 2026-11-03: Dev tools pytest, ruff (<0.18), mypy `--strict` | Supports typed-module rule; ruff capped because pre-1.0 minors change rules | Accepted (user, Phase 00 plan) |
 | D-013 | 2026-11-03: Ignore only the two Box2D SWIG DeprecationWarning patterns in `pytest.ini` | Upstream and not actionable; as errors they crash the interpreter (access violation) instead of failing a test; a blanket ignore would hide real warnings | Accepted (Test Engineer M1; user review at checkpoint) |
 | D-014 | 2026-11-03: Phase checkpoints committed locally; no push to `origin` without explicit approval | Outward-facing action; user chose local-only | Accepted (user, Phase 00 plan) |
+| D-015 | 2026-11-03: Root-level package `lunar_lander_rl/`, not installed; pytest `pythonpath = .`; scripts add the repo root to `sys.path` | Keeps D-011 (no `pyproject.toml`). Alternative: `src/` layout + `pip install -e .`, which is more robust but needs packaging metadata now. Trade-off: commands must run from the repo root, and each script carries a small path bootstrap. Revisit if packaging is introduced | Accepted (user, Phase 01 plan) |
+| D-016 | 2026-11-03: Exploration-tool parameters via argparse with documented defaults; YAML config + validation deferred to Phase 02 (training) | Avoids adding PyYAML before a config consumer exists | Accepted (user, Phase 01 plan) |
 
 Add new decisions with date, alternatives, trade-offs and user approval status.
