@@ -23,6 +23,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
+from lunar_lander_rl.cli import non_negative_int, positive_int
 from lunar_lander_rl.environment import (
     ACTION_MEANINGS,
     OBSERVATION_LABELS,
@@ -38,37 +39,23 @@ DEFAULT_SEED = 0
 DEFAULT_PRINT_STEPS = 5
 
 
-def _positive_int(text: str) -> int:
-    value = int(text)
-    if value <= 0:
-        raise argparse.ArgumentTypeError(f"must be a positive integer, got {value}")
-    return value
-
-
-def _non_negative_int(text: str) -> int:
-    value = int(text)
-    if value < 0:
-        raise argparse.ArgumentTypeError(f"must be a non-negative integer, got {value}")
-    return value
-
-
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         description=__doc__.splitlines()[0] if __doc__ else None
     )
-    parser.add_argument("--episodes", type=_positive_int, default=DEFAULT_EPISODES)
-    parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
+    parser.add_argument("--episodes", type=positive_int, default=DEFAULT_EPISODES)
+    parser.add_argument("--seed", type=non_negative_int, default=DEFAULT_SEED)
     parser.add_argument("--render", choices=RENDER_CHOICES, default="none")
     parser.add_argument(
         "--max-steps",
-        type=_positive_int,
+        type=positive_int,
         default=None,
         help="Outer bound on steps per episode (default: the env's registered time limit).",
     )
     parser.add_argument(
         "--print-steps",
-        type=_non_negative_int,
+        type=non_negative_int,
         default=DEFAULT_PRINT_STEPS,
         help="Number of initial transitions to print per episode.",
     )

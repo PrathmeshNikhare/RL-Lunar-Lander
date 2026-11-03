@@ -1,4 +1,4 @@
-# Exact versions verified in Phase 00 (2026-11-03) on Windows 11, CPython 3.12.5 64-bit, pip 26.3.
+# Exact versions verified in Phase 00 (2026-11-03), updated in Phase 02, on Windows 11, CPython 3.12.5 64-bit, pip 26.3.
 # Generated with: .\.venv\Scripts\python.exe -m pip freeze --exclude-editable
 # Regenerate only after re-running the Phase 00 verification commands.
 absl-py==2.5.1
@@ -8,12 +8,15 @@ cloudpickle==3.1.2
 colorama==0.4.6
 contourpy==1.4.0
 cycler==0.12.1
+decorator==5.3.1
 Farama-Notifications==0.0.6
 filelock==4.2.7
 fonttools==4.68.0
 fsspec==2026.9.0
 grpcio==1.85.1
 gymnasium==1.4.0
+ImageIO==2.38.1
+imageio-ffmpeg==0.8.1
 iniconfig==2.3.1
 Jinja2==3.1.6
 kiwisolver==1.5.1
@@ -21,6 +24,7 @@ librt==0.16.0
 Markdown==3.11.2
 MarkupSafe==3.0.4
 matplotlib==3.11.2
+moviepy==2.2.1
 mpmath==1.3.0
 mypy==2.4.1
 mypy_extensions==1.1.0
@@ -28,14 +32,17 @@ networkx==3.7
 numpy==2.5.4
 packaging==26.3
 pathspec==1.1.1
-pillow==13.0.0
+pillow==11.3.0
 pluggy==1.7.0
+proglog==0.1.12
 protobuf==7.36.2
 pygame-ce==2.5.8
 Pygments==2.21.0
 pyparsing==3.3.3
 pytest==9.2.0
 python-dateutil==4.0.0
+python-dotenv==1.2.4
+PyYAML==6.0.3
 ruff==0.17.3
 setuptools==84.2.1
 stable_baselines3==2.9.2
@@ -43,6 +50,8 @@ sympy==1.14.0
 tensorboard==2.21.0
 tensorboard-data-server==0.7.2
 torch==2.15.0
+tqdm==4.70.1
+types-PyYAML==6.0.12.20261103
 typing_extensions==4.16.0
 tzdata==2026.6
 Werkzeug==3.1.9

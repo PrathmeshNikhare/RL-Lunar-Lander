@@ -1,0 +1,54 @@
+# Phase 02 baseline: PPO on the unmodified LunarLander-v3 reward.
+#
+# PPO values follow the RL Baselines3 Zoo `LunarLander-v3` entry
+# (hyperparams/ppo.yml, master branch, read 2026-11-03):
+#   n_envs 16, n_timesteps 1e6, MlpPolicy, n_steps 1024, batch_size 64,
+#   gae_lambda 0.98, gamma 0.999, n_epochs 4, ent_coef 0.01.
+# The remaining keys below are Stable-Baselines3 2.9.2 PPO defaults, written
+# out explicitly. Other implicit SB3 settings (normalize_advantage, target_kl,
+# clip_range_vf, use_sde, activation_fn=Tanh, ortho_init, Adam eps, ...) are not
+# configured here; train.py reads them back from the constructed model and
+# records them under effective_hyperparameters in each run's metadata.json.
+# net_arch [64, 64] is decision D-007 (and SB3's default for PPO MlpPolicy).
+#
+# NOTE: gamma here must match the discount used by potential-based shaping in
+# Phase 03 (decision D-019).
+
+experiment_id: baseline
+
+environment:
+  id: LunarLander-v3
+
+reward:
+  mode: original
+
+training:
+  total_timesteps: 1000000
+  seed: 42            # vectorised env i is seeded with seed + i
+  n_envs: 16          # DummyVecEnv (in-process)
+  checkpoint_freq: 100000   # total env timesteps between checkpoints; 0 disables
+  device: cpu
+
+ppo:
+  policy: MlpPolicy
+  net_arch: [64, 64]
+  learning_rate: 0.0003   # SB3 default
+  n_steps: 1024
+  batch_size: 64
+  n_epochs: 4
+  gamma: 0.999
+  gae_lambda: 0.98
+  clip_range: 0.2         # SB3 default
+  ent_coef: 0.01
+  vf_coef: 0.5            # SB3 default
+  max_grad_norm: 0.5      # SB3 default
+
+evaluation:
+  episodes: 100
+  deterministic: true
+  seed_start: 10000   # disjoint from training seeds 42..57
+
+video:
+  episodes: 3
+  deterministic: true
+  seed_start: 20000

@@ -8,3 +8,5 @@ stable-baselines3>=2.9,<3     # PPO / MlpPolicy
 torch>=2.15,<3                # SB3 backend; PyPI Windows wheel is CPU-only
 tensorboard>=2.21,<3          # training curves
 matplotlib>=3.11,<4           # comparison plots
+pyyaml>=6.0,<7                # experiment configuration files (safe_load only)
+moviepy>=2.2,<3               # Gymnasium RecordVideo backend; caps pillow below 12
