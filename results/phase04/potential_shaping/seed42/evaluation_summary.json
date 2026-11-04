@@ -1,0 +1,57 @@
+{
+  "created_at": "2026-11-04T20:22:28.415677+00:00",
+  "reward": "original environment reward (no wrappers)",
+  "env_id": "LunarLander-v3",
+  "settings": {
+    "episodes": 100,
+    "deterministic": true,
+    "seed_start": 10000
+  },
+  "run_dir": "20261103T220904Z_seed42",
+  "experiment_id": "potential_shaping",
+  "model": "model.zip",
+  "model_sha256": "f054a8848d7ed7d78038de816e3ea589bb1c6995a2818d98197a9a049ba93f4c",
+  "max_episode_steps": 1000,
+  "render_mode": null,
+  "summary": {
+    "n_episodes": 100,
+    "mean_return": 250.01188979767466,
+    "std_return": 44.93540840839373,
+    "median_return": 256.7808785408374,
+    "min_return": -5.900609966756832,
+    "max_return": 299.15228710293366,
+    "mean_length": 354.76,
+    "std_length": 30.50455173851399,
+    "n_terminated": 100,
+    "n_truncated": 0,
+    "n_final_reward_plus_100": 97,
+    "n_final_reward_minus_100": 3,
+    "reward_threshold": 200.0,
+    "n_return_at_least_threshold": 97,
+    "mean_return_at_least_threshold": true
+  },
+  "python": "3.12.5",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "gymnasium": "1.4.0",
+    "Box2D": "2.3.10",
+    "stable-baselines3": "2.9.2",
+    "torch": "2.15.0",
+    "numpy": "2.5.4",
+    "tensorboard": "2.21.0",
+    "moviepy": "2.2.1",
+    "pillow": "11.3.0",
+    "PyYAML": "6.0.3"
+  },
+  "source": {
+    "commit": "74f4f36584647a4b333ad15570fb0e5edd9df137",
+    "dirty": false,
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked": []
+  },
+  "argv": [
+    "scripts\\evaluate.py",
+    "--run-dir",
+    ".\\runs\\potential_shaping\\20261103T220904Z_seed42"
+  ]
+}

@@ -102,3 +102,20 @@ because it also holds the Phase 02 runs.
 
 Phase 04 reports raw per-run tallies only. Success, crash and hover rules,
 and the comparison across seeds, belong to Phase 05.
+
+## Late-training window
+
+The records summarise training-time episodes (from `reward_components.csv`)
+over episodes **ending at or after 900,000 timesteps**.
+
+- This window was chosen after training, as a descriptive choice. It was
+  not pre-registered.
+- It covers the last 115,808 steps (about 7 rollouts) under the stochastic
+  training policy.
+- It averages per episode, so the number of episodes differs between runs
+  (117–320).
+- Episodes still unfinished when training stops are not included.
+- For runs that were still improving, the values shift with the window
+  start. For example, time_penalty seed 142's mean original return is 179.3,
+  192.2 and 215.1 for windows starting at 800k, 900k and 950k.
+- Treat these as descriptions of late training, not as evaluation results.

@@ -1,30 +1,29 @@
 # Current Handoff
 
 ## State
-- **Phases 00–01** are complete (`70e3445`, `ce62dd6`).
-- **Phase 02** (baseline PPO) is implemented and verified.
-  - The code is committed as `0f125a5` "Phase 02 (1/2)".
-  - The results, record and progress files are committed as "Phase 02 (2/2)".
-    Phase 02 is complete. Nothing is pushed.
-- **Official baseline:** `runs/baseline/20261103T174958Z_seed42` (local,
-  git-ignored), trained from the clean `0f125a5`. Mean original return
-  237.56 (sample std 52.37) over 100 episodes, from **one seed**.
-- **Committed copies:** `results/baseline/`. Write-up:
-  `experiments/records/2026-11-03-baseline-seed42.md`.
+- **Phases 00–03** are complete (`70e3445`, `ce62dd6`, Phase 02 1/2 and
+  2/2, `a71d7d0`). Nothing is pushed.
+- **Phase 04** (four reward experiments) is complete. It is committed as
+  `74f4f36` "Phase 04 (1/2)" and "Phase 04 (2/2)" (local, not pushed).
+  - The configs are committed in `74f4f36` "Phase 04 (1/2)".
+  - 12 runs (4 configs × seeds 42/142/242) were trained from the clean
+    `74f4f36`.
+  - Each run was evaluated on the original reward (100 episodes) and
+    recorded on video (3 clips).
+  - All three specialist reviews returned REVISE. Every required fix is
+    applied (see the handoff).
+  - The user reviewed the upright_slow_bonus clips. Seeds 142 and 242 hover;
+    seed 42 lands on the pad, late.
+- The local interrupted run `runs/time_penalty/20261103T223642Z_seed242` is
+  not a result (D-033).
 
-- **Phase 03** (reward wrapper) is implemented and verified: four reward
-  modes, pure reward functions, `RewardComponentsWrapper`, per-episode
-  component logging. 202 tests pass. Committed locally as "Phase 03: reward
-  wrapper". Nothing is pushed.
-
-Full records: `progress/handoffs/2026-11-03-phase-02.md`,
-`progress/handoffs/2026-11-04-phase-03.md`.
+Full record: `progress/handoffs/2026-11-05-phase-04.md`.
 
 ## Current phase
-`04-reward-experiments`: not started. Phases 00–03 are complete.
+`05-evaluation`: not started. Phases 00–04 are complete.
 
 ## Next safe action
-1. Run `/start-phase 04-reward-experiments` and present the plan only.
+1. Run `/start-phase 05-evaluation` and present the plan only.
 2. Wait for explicit user approval before editing.
 
 ## Environment notes
@@ -48,10 +47,11 @@ Full records: `progress/handoffs/2026-11-03-phase-02.md`,
   - seeding also drives the terrain and per-step engine dispersion.
 - Reward modes, formulas, terminal handling and logging:
   `docs/reward-wrapper.md`. γ for shaping is always `ppo.gamma` (D-019).
-- For Phase 04: choose and justify reward magnitudes (relative to the
-  environment's built-in shaping and typical step rewards); write the four
-  experiment configs; check behaviour with videos and metrics, and do not
-  assume hovering emerges.
+- For Phase 05:
+  - select runs by `metadata.json` `status: completed`, not by folder glob;
+  - the `model.zip` hash is not a policy fingerprint, so use the inner
+    `policy.pth` or the evaluation CSV;
+  - do not compare undiscounted shaped totals across policies.
 
 ## Constraints
 - Windows 11, PowerShell, Python 3.12.

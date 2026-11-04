@@ -1,0 +1,47 @@
+{
+  "experiment_id": "potential_shaping",
+  "environment": {
+    "id": "LunarLander-v3"
+  },
+  "reward": {
+    "mode": "potential_based",
+    "alpha": 100.0,
+    "distance_weight": 1.0,
+    "speed_weight": 1.0,
+    "angle_weight": 1.0
+  },
+  "training": {
+    "total_timesteps": 1000000,
+    "seed": 142,
+    "n_envs": 16,
+    "checkpoint_freq": 100000,
+    "device": "cpu"
+  },
+  "ppo": {
+    "policy": "MlpPolicy",
+    "net_arch": [
+      64,
+      64
+    ],
+    "learning_rate": 0.0003,
+    "n_steps": 1024,
+    "batch_size": 64,
+    "n_epochs": 4,
+    "gamma": 0.999,
+    "gae_lambda": 0.98,
+    "clip_range": 0.2,
+    "ent_coef": 0.01,
+    "vf_coef": 0.5,
+    "max_grad_norm": 0.5
+  },
+  "evaluation": {
+    "episodes": 100,
+    "deterministic": true,
+    "seed_start": 10000
+  },
+  "video": {
+    "episodes": 3,
+    "deterministic": true,
+    "seed_start": 20000
+  }
+}
