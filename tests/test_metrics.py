@@ -225,3 +225,36 @@ def test_limits_apply_at_float32_precision() -> None:
     assert (
         classify_outcome(True, False, 100.0, float(np.float32(0.19999999))) == "success"
     )
+
+
+@pytest.mark.parametrize(
+    ("policy_name", "expected"),
+    [("no-op", "crash"), ("main engine", "out_of_bounds"), ("heuristic", "success")],
+)
+def test_outcome_rules_on_real_environment_episodes(
+    policy_name: str, expected: str
+) -> None:
+    """Real LunarLander-v3 episodes (seeds 0-2) receive the expected labels.
+
+    No-op falls onto the body; a constant main engine drifts off-screen; the
+    built-in heuristic controller lands on the pad (docs/environment-notes.md).
+    """
+    from gymnasium.envs.box2d.lunar_lander import heuristic
+
+    from lunar_lander_rl.environment import make_env
+    from lunar_lander_rl.evaluate import run_episodes
+
+    env = make_env()
+    policies = {
+        "no-op": lambda _obs: 0,
+        "main engine": lambda _obs: 2,
+        "heuristic": lambda obs: int(heuristic(env.unwrapped, obs)),  # type: ignore[no-untyped-call]
+    }
+    try:
+        results = run_episodes(policies[policy_name], 3, 0)
+    finally:
+        env.close()
+    assert [
+        classify_outcome(r.terminated, r.truncated, r.final_reward, r.final_x)
+        for r in results
+    ] == [expected] * 3

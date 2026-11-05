@@ -1,29 +1,25 @@
 # Current Handoff
 
 ## State
-- **Phases 00–03** are complete (`70e3445`, `ce62dd6`, Phase 02 1/2 and
-  2/2, `a71d7d0`). Nothing is pushed.
-- **Phase 04** (four reward experiments) is complete. It is committed as
-  `74f4f36` "Phase 04 (1/2)" and "Phase 04 (2/2)" (local, not pushed).
-  - The configs are committed in `74f4f36` "Phase 04 (1/2)".
-  - 12 runs (4 configs × seeds 42/142/242) were trained from the clean
-    `74f4f36`.
-  - Each run was evaluated on the original reward (100 episodes) and
-    recorded on video (3 clips).
-  - All three specialist reviews returned REVISE. Every required fix is
-    applied (see the handoff).
-  - The user reviewed the upright_slow_bonus clips. Seeds 142 and 242 hover;
-    seed 42 lands on the pad, late.
-- The local interrupted run `runs/time_penalty/20261103T223642Z_seed242` is
-  not a result (D-033).
+- **Phases 00–04** are complete. Phase 04 is `74f4f36` and `153eccc`.
+  Nothing is pushed.
+- **Phase 05** (controlled evaluation) is complete: `e481fdf`, `6bb2bb6`,
+  and "Phase 05 (3/3)" (local, not pushed).
+  - Code is committed in `e481fdf` (1/2) and `6bb2bb6` (2/3).
+  - The 12 runs were re-evaluated with trajectories from the clean
+    `e481fdf`; every `episodes.csv` is identical to Phase 04.
+  - The comparison ran from the clean `6bb2bb6`, writing to
+    `results/phase05/`.
+  - Experiment Analyst and Test Engineer reviews: REVISE. All required
+    fixes are applied (see the handoff).
 
-Full record: `progress/handoffs/2026-11-05-phase-04.md`.
+Full record: `progress/handoffs/2026-11-05-phase-05.md`.
 
 ## Current phase
-`05-evaluation`: not started. Phases 00–04 are complete.
+`06-visualization`: not started. Phases 00–05 are complete.
 
 ## Next safe action
-1. Run `/start-phase 05-evaluation` and present the plan only.
+1. Run `/start-phase 06-visualization` and present the plan only.
 2. Wait for explicit user approval before editing.
 
 ## Environment notes
@@ -47,11 +43,14 @@ Full record: `progress/handoffs/2026-11-05-phase-04.md`.
   - seeding also drives the terrain and per-step engine dispersion.
 - Reward modes, formulas, terminal handling and logging:
   `docs/reward-wrapper.md`. γ for shaping is always `ppo.gamma` (D-019).
-- For Phase 05:
-  - select runs by `metadata.json` `status: completed`, not by folder glob;
-  - the `model.zip` hash is not a policy fingerprint, so use the inner
-    `policy.pth` or the evaluation CSV;
-  - do not compare undiscounted shaped totals across policies.
+- Run selection: by `metadata.json` (`lunar_lander_rl.comparison`), never
+  by folder glob. The `model.zip` hash is not a policy fingerprint.
+- Metrics and outcome rules: `docs/07-metrics.md`. Per-step data is in each
+  run's newest `evaluations/*/trajectories.npz` (local only).
+- `comparison.compare` refuses an existing output folder. Write new results
+  to a new folder.
+- For Phase 06: plot from `results/phase05/`. Never put shaped training
+  totals on the same axis as evaluation returns.
 
 ## Constraints
 - Windows 11, PowerShell, Python 3.12.

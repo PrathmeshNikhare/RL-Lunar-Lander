@@ -161,3 +161,28 @@ For each phase, append:
   (2/2)" (results, records, progress). Both are local commits on `main`,
   not pushed.
 - **Handoff:** `progress/handoffs/2026-11-05-phase-04.md`
+
+---
+
+## 2026-11-05 — 05-evaluation
+
+- **Plan approval:** the user approved the plan and its 5 recommended
+  decisions ("go ahead"): D-036, D-037, D-038 and D-040. D-039 was added
+  during the phase.
+- **Files changed:** see `progress/handoffs/2026-11-05-phase-05.md`.
+- **Checks:**
+  - pytest 296 passed; ruff and `mypy --strict` clean.
+  - Re-evaluation: 12/12 runs exit 0, and every `episodes.csv` is
+    byte-identical to Phase 04.
+  - The comparison ran three times with identical tables. The committed
+    output is clean at `6bb2bb6`.
+- **Specialist review:**
+  - Test Engineer REVISE: (a) and (b) fixed, plus most recommended items.
+  - Experiment Analyst REVISE (minor): M1–M4 fixed; L1–L8 addressed.
+- **Acceptance decision:** Accepted. The acceptance criteria are evidenced,
+  and the user approved the checkpoint commit ("commit") after D-039 was
+  flagged for review.
+- **Git checkpoint:** `e481fdf` (1/2), `6bb2bb6` (2/3), then "Phase 05
+  (3/3)" (results, report, progress). All are local commits on `main`, not
+  pushed.
+- **Handoff:** `progress/handoffs/2026-11-05-phase-05.md`

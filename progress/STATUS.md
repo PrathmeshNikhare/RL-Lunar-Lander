@@ -1,22 +1,21 @@
 # Project Status
 
 - Project: Lunar Lander Reward Engineering with PPO
-- Overall status: Phases 00–04 complete; Phase 05 not started
-- Current phase: 05-evaluation (next)
+- Overall status: Phases 00–05 complete; Phase 06 not started
+- Current phase: 06-visualization (next)
 - Current phase status: Not started; plan requires user approval
-- Last commit: "Phase 04 (2/2): results, records and progress" (local, not
-  pushed). All 12 Phase 04 runs were trained from `74f4f36` with a clean
-  tree
-- Phase 04 results: 12 runs (4 configs × seeds 42/142/242), copied to
-  `results/phase04/`. Records: `experiments/records/2026-11-04-*.md`.
-  upright_slow_bonus seeds 142 and 242 hover instead of landing (99/100
-  and 100/100 evaluation episodes truncated; confirmed visually by the
-  user). Seed 42 lands on the pad, but late. See the records for all
-  numbers
-- Baseline result (Phase 02, one seed): mean original return 237.56 (sample
-  std 52.37) over 100 evaluation episodes
+- Last commit: "Phase 05 (3/3): results, report and progress" (local, not
+  pushed). The committed comparison output was produced from `6bb2bb6` with
+  a clean tree
+- Phase 05 results (`results/phase05/`, report
+  `experiments/records/2026-11-05-controlled-evaluation.md`):
+  - success on the pad, pooled over 3 seeds × 100 episodes: baseline
+    291/300, time penalty 296/300, potential shaping 295/300,
+    upright_slow_bonus 92/300 (206 timeouts);
+  - the upright bonus hovers (seed 242), sinks very slowly without landing
+    (seed 142), or descends very slowly and then lands (seed 42)
 - Active blockers: None
-- Next action: `/start-phase 05-evaluation` (plan only)
+- Next action: `/start-phase 06-visualization` (plan only)
 - User approval required before implementation: Yes
 
 ## Phase tracker
@@ -28,10 +27,10 @@
 | 02 | Baseline PPO | Complete |
 | 03 | Reward wrapper | Complete |
 | 04 | Four reward experiments | Complete |
-| 05 | Controlled evaluation | Not started |
+| 05 | Controlled evaluation | Complete |
 | 06 | Visualization and analysis | Not started |
 | 07 | GitHub publication | Not started |
 
-Latest handoff: `progress/handoffs/2026-11-05-phase-04.md`
+Latest handoff: `progress/handoffs/2026-11-05-phase-05.md`
 
 Update this file only with verified repository evidence.
