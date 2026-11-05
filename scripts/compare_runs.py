@@ -22,8 +22,8 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
 from lunar_lander_rl.artifacts import DEFAULT_RUNS_ROOT
-from lunar_lander_rl.comparison import compare
-from lunar_lander_rl.config import load_metrics_config
+from lunar_lander_rl.comparison import ComparisonError, compare
+from lunar_lander_rl.config import ConfigError, load_metrics_config
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -38,7 +38,11 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the comparison and return a process exit code."""
     args = parse_args(argv)
-    result = compare(load_metrics_config(args.config), args.runs_root, args.output)
+    try:
+        result = compare(load_metrics_config(args.config), args.runs_root, args.output)
+    except (ConfigError, ComparisonError, FileExistsError) as exc:
+        print(f"Comparison error: {exc}", file=sys.stderr)
+        return 2
     print(f"Compared {len(result['runs'])} runs; written to: {args.output}")
     for missing in result["missing_runs"]:
         print(f"MISSING: {missing['experiment_id']} seed {missing['training_seed']}")

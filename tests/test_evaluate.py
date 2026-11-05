@@ -319,6 +319,9 @@ def test_trajectories_round_trip_and_are_write_once(tmp_path: Path) -> None:
     seeds, loaded = read_trajectories(path)
     assert seeds == [r.seed for r in results]
     for original, copy in zip(steps, loaded, strict=True):
+        assert copy.observations.dtype == np.float32
+        assert copy.actions.dtype == np.int8
+        assert copy.rewards.dtype == np.float64  # exact reward-sum checks rely on it
         assert np.array_equal(original.observations, copy.observations)
         assert np.array_equal(original.actions, copy.actions)
         assert np.array_equal(original.rewards, copy.rewards)

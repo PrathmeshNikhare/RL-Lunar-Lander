@@ -264,6 +264,8 @@ def training_summary(run: SelectedRun, window_start: int) -> dict[str, Any]:
 
 def compare(config: MetricsConfig, runs_root: Path, output_dir: Path) -> dict[str, Any]:
     """Run the comparison and write all tables to the new ``output_dir``."""
+    # Before any output exists: the outputs would otherwise count as untracked.
+    provenance = environment_metadata()
     runs, missing = select_runs(runs_root, config.run_selection)
     if not runs:
         raise ComparisonError("no runs selected")
@@ -347,7 +349,7 @@ def compare(config: MetricsConfig, runs_root: Path, output_dir: Path) -> dict[st
         ],
         "missing_runs": missing,
         "pooled_counts": pooled,
-        **environment_metadata(),
+        **provenance,
     }
     write_json(output_dir / COMPARISON_FILENAME, result)
     return result

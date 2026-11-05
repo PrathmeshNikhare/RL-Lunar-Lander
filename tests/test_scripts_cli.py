@@ -132,3 +132,52 @@ def test_evaluate_and_video_reject_invalid_arguments(
     for cli in (evaluate_cli, video_cli):
         with pytest.raises(SystemExit):
             cli.parse_args(argv)
+
+
+def test_compare_runs_main_and_config_error(
+    shaped_smoke_run: TrainingResult, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import shutil
+
+    from lunar_lander_rl.evaluate import evaluate_run
+
+    compare_cli = _load("compare_runs")
+    source = shaped_smoke_run.run_dir
+    runs_root = tmp_path / "runs"
+    target = runs_root / source.parent.name / source.name
+    shutil.copytree(
+        source, target, ignore=shutil.ignore_patterns("evaluations", "videos")
+    )
+    evaluate_run(target, episodes=1, timestamp="20000101T000001Z")
+    meta = read_json(target / "metadata.json")
+    config: dict[str, Any] = {
+        "run_selection": {
+            "source_commit": meta["source"]["commit"][:7],
+            "experiments": [meta["experiment_id"]],
+            "seeds": [meta["training_seed"]],
+        },
+        "hover": {"min_height": 0.1, "max_speed": 0.2, "min_consecutive_steps": 5},
+        "training_window": {"start_timestep": 0},
+    }
+    config_path = tmp_path / "metrics.yaml"
+    config_path.write_text(yaml.safe_dump(config), encoding="utf-8")
+    out = tmp_path / "out"
+    argv = [
+        "--config",
+        str(config_path),
+        "--output",
+        str(out),
+        "--runs-root",
+        str(runs_root),
+    ]
+    assert compare_cli.main(argv) == 0
+    assert (out / "comparison.json").is_file()
+    assert "Compared 1 runs" in capsys.readouterr().out
+    # Existing output and invalid config: clean exit code 2, no traceback.
+    assert compare_cli.main(argv) == 2
+    config["hover"]["max_speed"] = 0
+    config_path.write_text(yaml.safe_dump(config), encoding="utf-8")
+    argv[3] = str(tmp_path / "out2")
+    assert compare_cli.main(argv) == 2
+    assert "Comparison error" in capsys.readouterr().err
+    assert not (tmp_path / "out2").exists()

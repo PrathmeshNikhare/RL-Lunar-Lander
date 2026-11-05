@@ -54,9 +54,9 @@ load a saved model; they never reuse the training environment.
   - `summary.json`: settings, the env id and time limit, the model file name
     and its SHA-256, descriptive statistics, versions and git revision. Standard deviations are sample standard deviations (ddof = 1).
     The counts of final ±100 rewards are raw outcome tallies.
-- Success and crash rates are **not** computed yet. Their definitions belong
-  to Phase 05; see `environment-notes.md` for why "+100" is not the same as
-  "landed on the pad".
+  - `trajectories.npz`: every step's observation, action and original reward
+    (local; `runs/` is git-ignored). Outcome, hover and engine metrics are
+    derived from it (see step 4).
 
 ## 3. Record videos
 
@@ -69,6 +69,17 @@ load a saved model; they never reuse the training environment.
 - Clips are written to `videos/<timestamp>/mp4/`.
 - An `episodes.csv` and `summary.json` are written alongside the clips, so
   each clip can be matched to its seed and return.
+
+## 4. Compare runs (Phase 05)
+
+```powershell
+.\.venv\Scripts\python.exe scripts\compare_runs.py --config configs\evaluation_metrics.yaml --output results\phase05
+```
+
+- Selects runs by `metadata.json` and validates the raw evaluation data.
+- Writes per-episode outcomes and diagnostics, and per-run and per-config
+  summaries. Training shaped returns go in a separate table.
+- Exact rules: `docs/07-metrics.md`.
 
 ## Run directory layout
 
@@ -86,7 +97,7 @@ runs/<experiment_id>/<YYYYmmddTHHMMSSZ>_seed<N>/
   tensorboard/ppo_1/          SB3 scalars (+ reward/<component> means):
                               tensorboard --logdir runs
   checkpoints/ppo_<steps>_steps.zip
-  evaluations/<timestamp>/    episodes.csv, summary.json
+  evaluations/<timestamp>/    episodes.csv, summary.json, trajectories.npz
   videos/<timestamp>/         episodes.csv, summary.json, mp4/*.mp4
 ```
 

@@ -203,3 +203,25 @@ def test_across_seeds() -> None:
     assert partial["n_seeds"] == 1 and partial["mean"] == 4.0
     empty = across_seeds([math.nan])
     assert empty["n_seeds"] == 0 and math.isnan(empty["mean"])
+
+
+def test_hover_speed_is_the_euclidean_norm() -> None:
+    # Each component is below 0.2, but the norm is 0.212: not a hover step.
+    obs = np.asarray([_obs(vx=0.15, vy=0.15), _obs(vx=0.1, vy=-0.1)], dtype=np.float32)
+    assert hover_steps(obs, HOVER).tolist() == [False, True]
+
+
+def test_limits_apply_at_float32_precision() -> None:
+    """Observations are float32; the documented limits behave as follows.
+
+    Hover: a float32 array compared with a Python float uses float32 (NumPy 2,
+    NEP 50), so a speed of float32(0.2) is within ``max_speed`` 0.2.
+    Outcome: ``final_x`` is a float32 widened to float64; float32(0.2) is
+    0.2000000030 > 0.2, so it is off the pad.
+    """
+    edge = np.float32(0.2)
+    assert hover_steps(np.asarray([_obs(vy=float(edge))], dtype=np.float32), HOVER)[0]
+    assert classify_outcome(True, False, 100.0, float(edge)) == "rest_off_pad"
+    assert (
+        classify_outcome(True, False, 100.0, float(np.float32(0.19999999))) == "success"
+    )

@@ -144,6 +144,7 @@ def test_non_original_evaluation_is_rejected(runs_root: Path, tmp_path: Path) ->
     summary_path.write_text(json.dumps(summary), encoding="utf-8")
     with pytest.raises(ComparisonError, match="original reward"):
         compare(_config(run_dir), runs_root, tmp_path / "out")
+    assert not (tmp_path / "out").exists()
 
 
 def test_duplicate_runs_are_rejected(runs_root: Path) -> None:
@@ -173,3 +174,149 @@ def test_run_without_trajectories_is_rejected(runs_root: Path) -> None:
     shutil.rmtree(run_dir / "evaluations")
     with pytest.raises(ComparisonError, match="no evaluation"):
         select_runs(runs_root, _config(run_dir).run_selection)
+
+
+SECOND_SEED = 4242
+
+
+def _add_seed_copy(run_dir: Path, seed: int) -> Path:
+    """A copy of ``run_dir`` whose metadata claims another training seed."""
+    copy = run_dir.with_name(f"20000101T000000Z_seed{seed}")
+    shutil.copytree(run_dir, copy)
+    meta = read_json(copy / "metadata.json")
+    meta["training_seed"] = seed
+    (copy / "metadata.json").write_text(json.dumps(meta), encoding="utf-8")
+    return copy
+
+
+def _two_seed_config(run_dir: Path) -> MetricsConfig:
+    config = _config(run_dir)
+    selection = config.run_selection
+    return MetricsConfig(
+        run_selection=RunSelectionConfig(
+            selection.source_commit,
+            selection.experiments,
+            (selection.seeds[0], SECOND_SEED),
+        ),
+        hover=config.hover,
+        training_window_start=config.training_window_start,
+    )
+
+
+def test_two_seeds_are_aggregated_across_seeds(runs_root: Path, tmp_path: Path) -> None:
+    run_dir = _only_run(runs_root)
+    _add_seed_copy(run_dir, SECOND_SEED)
+    out = tmp_path / "out"
+    result = compare(_two_seed_config(run_dir), runs_root, out)
+    assert result["missing_runs"] == []
+    runs = _csv(out / "run_summary.csv")
+    assert sorted(int(r["training_seed"]) for r in runs) == sorted(
+        (read_json(run_dir / "metadata.json")["training_seed"], SECOND_SEED)
+    )
+    (mean_return,) = [
+        r for r in _csv(out / "config_summary.csv") if r["metric"] == "mean_return"
+    ]
+    assert mean_return["n_seeds"] == "2"
+    values = [float(r["mean_return"]) for r in runs]
+    assert float(mean_return["mean"]) == pytest.approx(sum(values) / 2)
+    pooled = next(iter(result["pooled_counts"].values()))
+    assert pooled["n_runs"] == 2 and pooled["n_episodes"] == 4
+    assert sum(pooled[f"n_{o}"] for o in OUTCOMES) == 4
+    assert len(_csv(out / "episode_metrics.csv")) == 4
+
+
+def test_mismatched_evaluation_settings_are_rejected(
+    runs_root: Path, tmp_path: Path
+) -> None:
+    run_dir = _only_run(runs_root)
+    copy = _add_seed_copy(run_dir, SECOND_SEED)
+    summary_path = copy / "evaluations" / "20000101T000001Z" / "summary.json"
+    summary = read_json(summary_path)
+    summary["settings"]["deterministic"] = not summary["settings"]["deterministic"]
+    summary_path.write_text(json.dumps(summary), encoding="utf-8")
+    with pytest.raises(ComparisonError, match="settings differ"):
+        compare(_two_seed_config(run_dir), runs_root, tmp_path / "out")
+    assert not (tmp_path / "out").exists()
+
+
+@pytest.mark.parametrize("field", ["seed", "final_x", "final_y", "final_reward"])
+def test_each_trajectory_cross_check_is_enforced(
+    runs_root: Path, tmp_path: Path, field: str
+) -> None:
+    run_dir = _only_run(runs_root)
+    good = run_dir / "evaluations" / "20000101T000001Z"
+    bad = run_dir / "evaluations" / "20000101T000002Z"
+    shutil.copytree(good, bad)
+    rows = _csv(bad / "episodes.csv")
+    if field == "seed":
+        rows[0]["seed"] = str(int(rows[0]["seed"]) + 1)
+    else:
+        rows[0][field] = repr(float(rows[0][field]) + 0.5)
+    with (bad / "episodes.csv").open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+    with pytest.raises(ComparisonError, match="does not match"):
+        compare(_config(run_dir), runs_root, tmp_path / "out")
+
+
+def test_selection_filters_status_and_seed_independently(runs_root: Path) -> None:
+    run_dir = _only_run(runs_root)
+    selection = _config(run_dir).run_selection
+    seed = selection.seeds[0]
+    other_seed = RunSelectionConfig(
+        selection.source_commit, selection.experiments, (7,)
+    )
+    assert select_runs(runs_root, other_seed)[0] == []
+    meta = read_json(run_dir / "metadata.json")
+    meta["status"] = "interrupted"
+    (run_dir / "metadata.json").write_text(json.dumps(meta), encoding="utf-8")
+    selected, missing = select_runs(runs_root, selection)
+    assert selected == []
+    assert {"experiment_id": selection.experiments[0], "training_seed": seed} in missing
+
+
+def test_newer_session_without_trajectories_is_skipped(runs_root: Path) -> None:
+    run_dir = _only_run(runs_root)
+    newer = run_dir / "evaluations" / "20990101T000000Z"
+    shutil.copytree(run_dir / "evaluations" / "20000101T000001Z", newer)
+    (newer / TRAJECTORIES_FILENAME).unlink()
+    (selected,), _ = select_runs(runs_root, _config(run_dir).run_selection)
+    assert selected.evaluation_dir.name == "20000101T000001Z"
+
+
+def test_empty_training_window_and_no_runs_are_rejected(
+    runs_root: Path, tmp_path: Path
+) -> None:
+    run_dir = _only_run(runs_root)
+    config = _config(run_dir)
+    late = MetricsConfig(config.run_selection, config.hover, 10**9)
+    with pytest.raises(ComparisonError, match="no training episodes"):
+        compare(late, runs_root, tmp_path / "out")
+    nothing = MetricsConfig(
+        RunSelectionConfig("0000000", config.run_selection.experiments, (1,)),
+        config.hover,
+        0,
+    )
+    with pytest.raises(ComparisonError, match="no runs selected"):
+        compare(nothing, runs_root, tmp_path / "out")
+    assert not (tmp_path / "out").exists()
+
+
+def test_comparison_records_a_clean_source_despite_its_own_outputs(
+    runs_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Provenance is captured before any output file exists."""
+    from lunar_lander_rl import comparison
+
+    out = tmp_path / "out"
+    seen: list[bool] = []
+
+    def fake_metadata() -> dict[str, str]:
+        seen.append(out.exists())
+        return {"source": "stub"}
+
+    monkeypatch.setattr(comparison, "environment_metadata", fake_metadata)
+    result = compare(_config(_only_run(runs_root)), runs_root, out)
+    assert seen == [False]
+    assert result["source"] == "stub"
