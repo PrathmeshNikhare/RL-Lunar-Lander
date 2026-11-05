@@ -12,10 +12,13 @@ from lunar_lander_rl.config import (
     ConfigError,
     ExperimentConfig,
     load_config,
+    load_metrics_config,
     parse_episode_set,
+    parse_metrics_config,
 )
 
 BASELINE = Path(__file__).resolve().parents[1] / "configs" / "baseline.yaml"
+METRICS = Path(__file__).resolve().parents[1] / "configs" / "evaluation_metrics.yaml"
 
 
 def set_path(data: dict[str, Any], path: tuple[str, ...], value: Any) -> None:
@@ -276,3 +279,67 @@ def test_reward_keys_must_match_the_mode(
     config_dict["reward"] = reward
     with pytest.raises(ConfigError, match=message):
         ExperimentConfig.from_dict(config_dict)
+
+
+def _metrics_dict() -> dict[str, Any]:
+    return {
+        "run_selection": {
+            "source_commit": "74f4f36",
+            "experiments": ["baseline", "time_penalty"],
+            "seeds": [42, 142],
+        },
+        "hover": {"min_height": 0.1, "max_speed": 0.2, "min_consecutive_steps": 100},
+        "training_window": {"start_timestep": 900000},
+    }
+
+
+def test_metrics_config_file_has_the_pre_registered_values() -> None:
+    config = load_metrics_config(METRICS)
+    assert config.run_selection.source_commit == "74f4f36"
+    assert config.run_selection.experiments == (
+        "baseline",
+        "time_penalty",
+        "upright_slow_bonus",
+        "potential_shaping",
+    )
+    assert config.run_selection.seeds == (42, 142, 242)
+    assert (config.hover.min_height, config.hover.max_speed) == (0.1, 0.2)
+    assert config.hover.min_consecutive_steps == 100
+    assert config.training_window_start == 900000
+
+
+@pytest.mark.parametrize(
+    ("path", "value", "message"),
+    [
+        (("run_selection", "source_commit"), "74F4F36", "hex"),
+        (("run_selection", "source_commit"), "74f4", "hex"),
+        (("run_selection", "experiments"), [], "non-empty list"),
+        (("run_selection", "experiments"), ["baseline", "baseline"], "duplicate"),
+        (("run_selection", "experiments"), ["Bad Id"], "invalid experiment id"),
+        (("run_selection", "seeds"), [42, True], "non-negative integers"),
+        (("run_selection", "seeds"), [-1], "non-negative integers"),
+        (("hover", "min_height"), -0.1, ">= 0.0"),
+        (("hover", "max_speed"), 0.0, "> 0.0"),
+        (("hover", "max_speed"), float("nan"), "finite"),
+        (("hover", "min_consecutive_steps"), 0, ">= 1"),
+        (("training_window", "start_timestep"), -1, ">= 0"),
+    ],
+)
+def test_invalid_metrics_config_is_rejected(
+    path: tuple[str, ...], value: Any, message: str
+) -> None:
+    data = _metrics_dict()
+    set_path(data, path, value)
+    with pytest.raises(ConfigError, match=message):
+        parse_metrics_config(data)
+
+
+def test_metrics_config_rejects_unknown_and_missing_keys() -> None:
+    data = _metrics_dict()
+    data["hover"]["extra"] = 1
+    with pytest.raises(ConfigError, match="unknown"):
+        parse_metrics_config(data)
+    data = _metrics_dict()
+    del data["training_window"]
+    with pytest.raises(ConfigError, match="missing"):
+        parse_metrics_config(data)

@@ -463,3 +463,103 @@ def _check_seed_ranges_disjoint(
                     f"seed ranges overlap: {first} [{a.start}, {a.stop}) and "
                     f"{second} [{b.start}, {b.stop})"
                 )
+
+
+# --------------------------------------------------------------------------- #
+# Phase 05 comparison / metrics configuration (configs/evaluation_metrics.yaml)
+# --------------------------------------------------------------------------- #
+
+_COMMIT_PREFIX_PATTERN: Final = re.compile(r"^[0-9a-f]{7,40}$")
+
+
+@dataclass(frozen=True)
+class RunSelectionConfig:
+    """Which completed runs are compared: one per (experiment, seed)."""
+
+    source_commit: str
+    experiments: tuple[str, ...]
+    seeds: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class HoverConfig:
+    """Hover diagnostic thresholds (scaled observation units; docs/07-metrics.md)."""
+
+    min_height: float
+    max_speed: float
+    min_consecutive_steps: int
+
+
+@dataclass(frozen=True)
+class MetricsConfig:
+    run_selection: RunSelectionConfig
+    hover: HoverConfig
+    training_window_start: int
+
+    def to_dict(self) -> dict[str, Any]:
+        return dataclasses.asdict(self)
+
+
+def load_metrics_config(path: Path) -> MetricsConfig:
+    """Load and validate a YAML metrics/comparison configuration file."""
+    try:
+        with path.open(encoding="utf-8") as handle:
+            data = yaml.safe_load(handle)
+    except FileNotFoundError as exc:
+        raise ConfigError(f"config file not found: {path}") from exc
+    except yaml.YAMLError as exc:
+        raise ConfigError(f"invalid YAML in {path}: {exc}") from exc
+    return parse_metrics_config(data)
+
+
+def _unique_list(value: Any, where: str) -> list[Any]:
+    if not isinstance(value, list) or not value:
+        raise ConfigError(f"{where}: expected a non-empty list, got {value!r}")
+    if len(set(map(repr, value))) != len(value):
+        raise ConfigError(f"{where}: duplicate entries in {value!r}")
+    return value
+
+
+def parse_metrics_config(value: Any) -> MetricsConfig:
+    """Validate a metrics configuration mapping."""
+    top = _mapping(value, "metrics", ("run_selection", "hover", "training_window"))
+    where = "run_selection"
+    sel = _mapping(
+        top["run_selection"], where, ("source_commit", "experiments", "seeds")
+    )
+    commit = sel["source_commit"]
+    if not isinstance(commit, str) or not _COMMIT_PREFIX_PATTERN.match(commit):
+        raise ConfigError(
+            f"{where}.source_commit: expected 7-40 lowercase hex digits, got {commit!r}"
+        )
+    experiments = _unique_list(sel["experiments"], f"{where}.experiments")
+    for name in experiments:
+        if not isinstance(name, str) or not _EXPERIMENT_ID_PATTERN.match(name):
+            raise ConfigError(f"{where}.experiments: invalid experiment id {name!r}")
+    seeds = _unique_list(sel["seeds"], f"{where}.seeds")
+    for seed in seeds:
+        if isinstance(seed, bool) or not isinstance(seed, int) or seed < 0:
+            raise ConfigError(
+                f"{where}.seeds: expected non-negative integers, got {seed!r}"
+            )
+    hover = _mapping(
+        top["hover"], "hover", ("min_height", "max_speed", "min_consecutive_steps")
+    )
+    window = _mapping(top["training_window"], "training_window", ("start_timestep",))
+    return MetricsConfig(
+        run_selection=RunSelectionConfig(
+            source_commit=commit,
+            experiments=tuple(experiments),
+            seeds=tuple(seeds),
+        ),
+        hover=HoverConfig(
+            min_height=_float(hover, "min_height", "hover", at_least=0.0),
+            max_speed=_float(hover, "max_speed", "hover", greater_than=0.0),
+            min_consecutive_steps=_int(
+                hover, "min_consecutive_steps", "hover", minimum=1
+            ),
+        ),
+        training_window_start=_int(
+            window, "start_timestep", "training_window", minimum=0
+        ),
+    )

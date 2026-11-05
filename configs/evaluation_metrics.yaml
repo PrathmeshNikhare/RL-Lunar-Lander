@@ -1,0 +1,23 @@
+# Phase 05 controlled comparison: run selection and diagnostic thresholds.
+# Rules and rationale: docs/07-metrics.md. Fixed before the Phase 05
+# re-evaluation was computed (decision D-037); do not tune to the results.
+
+run_selection:
+  source_commit: 74f4f36    # all 12 Phase 04 runs were trained from this commit
+  experiments: [baseline, time_penalty, upright_slow_bonus, potential_shaping]
+  seeds: [42, 142, 242]
+
+# Hover diagnostic (project-defined, not an environment signal). A step is a
+# hover step when both leg flags are 0, y >= min_height and
+# speed ||(vx, vy)|| <= max_speed (scaled observation units). An episode
+# hovers when its longest run of consecutive hover steps reaches
+# min_consecutive_steps (100 steps = 2 s of simulated time at 50 FPS).
+hover:
+  min_height: 0.1           # about 0.67 world units above the pad level
+  max_speed: 0.2            # same "slow" threshold as the upright bonus (D-029)
+  min_consecutive_steps: 100
+
+# Training-time summaries from reward_components.csv use episodes ending at
+# or after this timestep (descriptive window, D-035).
+training_window:
+  start_timestep: 900000

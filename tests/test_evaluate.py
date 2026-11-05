@@ -20,10 +20,14 @@ from lunar_lander_rl.environment import ENV_ID, Observation, make_env
 from lunar_lander_rl.evaluate import (
     EPISODE_FIELDS,
     REWARD_THRESHOLD,
+    TRAJECTORIES_FILENAME,
     EpisodeResult,
+    EpisodeSteps,
     evaluate_run,
+    read_trajectories,
     run_episodes,
     summarize,
+    write_trajectories,
 )
 from lunar_lander_rl.train import TrainingResult
 
@@ -272,3 +276,75 @@ def test_old_runs_stay_evaluable_when_other_config_sections_change(
     (copy_dir / "config.json").write_text(json.dumps(saved), encoding="utf-8")
     session = evaluate_run(copy_dir, episodes=1, timestamp="eval-schema")
     assert len(_read_rows(session)) == 1
+
+
+def _alternating(observation: Observation) -> int:
+    """A deterministic, observation-dependent policy that fires engines."""
+    return 2 if observation[3] < -0.2 else (1 if observation[4] > 0 else 3)
+
+
+def test_step_log_is_consistent_with_episode_results() -> None:
+    steps: list[EpisodeSteps] = []
+    results = run_episodes(_alternating, EPISODES, SEED_START, step_log=steps)
+    assert len(steps) == len(results)
+    for result, episode in zip(results, steps, strict=True):
+        assert episode.observations.shape == (result.length + 1, 8)
+        assert episode.actions.shape == episode.rewards.shape == (result.length,)
+        total = 0.0
+        for reward in episode.rewards:
+            total += float(reward)
+        assert total == result.original_return
+        assert float(episode.rewards[-1]) == result.final_reward
+        assert float(episode.observations[-1][0]) == result.final_x
+        assert float(episode.observations[-1][1]) == result.final_y
+        env = make_env()
+        try:
+            reset_obs, _ = env.reset(seed=result.seed)
+        finally:
+            env.close()
+        assert np.array_equal(episode.observations[0], reset_obs)
+
+
+def test_step_recording_does_not_change_the_rollout() -> None:
+    plain = run_episodes(_alternating, EPISODES, SEED_START)
+    recorded = run_episodes(_alternating, EPISODES, SEED_START, step_log=[])
+    assert plain == recorded
+
+
+def test_trajectories_round_trip_and_are_write_once(tmp_path: Path) -> None:
+    steps: list[EpisodeSteps] = []
+    results = run_episodes(_alternating, 2, SEED_START, step_log=steps)
+    path = tmp_path / TRAJECTORIES_FILENAME
+    write_trajectories(path, [r.seed for r in results], steps)
+    seeds, loaded = read_trajectories(path)
+    assert seeds == [r.seed for r in results]
+    for original, copy in zip(steps, loaded, strict=True):
+        assert np.array_equal(original.observations, copy.observations)
+        assert np.array_equal(original.actions, copy.actions)
+        assert np.array_equal(original.rewards, copy.rewards)
+    with pytest.raises(FileExistsError):
+        write_trajectories(path, seeds, steps)
+    with pytest.raises(ValueError, match="seeds"):
+        write_trajectories(tmp_path / "other.npz", seeds[:1], steps)
+
+
+def test_read_trajectories_rejects_inconsistent_arrays(tmp_path: Path) -> None:
+    path = tmp_path / "bad.npz"
+    np.savez_compressed(
+        path,
+        seeds=np.asarray([1]),
+        lengths=np.asarray([3]),
+        observations=np.zeros((3, 8), dtype=np.float32),  # needs 4
+        actions=np.zeros(3, dtype=np.int8),
+        rewards=np.zeros(3),
+    )
+    with pytest.raises(ValueError, match="sizes"):
+        read_trajectories(path)
+
+
+def test_evaluate_run_saves_trajectories(smoke_run: TrainingResult) -> None:
+    session = evaluate_run(smoke_run.run_dir, timestamp="eval-trajectories")
+    rows = _read_rows(session)
+    seeds, steps = read_trajectories(session / TRAJECTORIES_FILENAME)
+    assert seeds == [int(row["seed"]) for row in rows]
+    assert [len(s.actions) for s in steps] == [int(row["length"]) for row in rows]
