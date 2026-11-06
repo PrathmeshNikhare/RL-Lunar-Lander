@@ -1,0 +1,23 @@
+# Phase 06 figures, per-step traces and video selection.
+# Inputs are committed result files; paths are relative to the project root.
+# Run selection, evaluation settings and the hover threshold are not repeated
+# here: they are read from the Phase 05 comparison.json that produced the data.
+
+inputs:
+  phase04_results: results/phase04        # <experiment>/seed<N>/ copies (D-018)
+  phase05_results: results/phase05        # comparison.json + tables (Phase 05)
+  component_traces: results/phase06/component_traces.csv
+
+# Training curves: trailing mean over this many consecutive training episodes
+# (ordered by the timestep at which each episode ended). No partial windows.
+training_curve:
+  rolling_episodes: 100
+
+# Fixed before looking at any trace or clip: the same episode index for every
+# run, not chosen by outcome.
+selection:
+  trace_episode: 0    # evaluation episode index (env seed = evaluation seed_start + index)
+  video_episode: 0    # video episode index (env seed = video seed_start + index)
+
+figure:
+  dpi: 150

@@ -563,3 +563,80 @@ def parse_metrics_config(value: Any) -> MetricsConfig:
             window, "start_timestep", "training_window", minimum=0
         ),
     )
+
+
+# --------------------------------------------------------------------------- #
+# Phase 06 visualization configuration (configs/visualization.yaml)
+# --------------------------------------------------------------------------- #
+
+
+@dataclass(frozen=True)
+class VisualizationConfig:
+    """Inputs and fixed choices for Phase 06 figures, traces and videos.
+
+    Paths are as written in the YAML file (relative to the project root when
+    the scripts are run from there).
+    """
+
+    phase04_results: Path
+    phase05_results: Path
+    component_traces: Path
+    rolling_episodes: int
+    trace_episode: int
+    video_episode: int
+    dpi: int
+
+    def to_dict(self) -> dict[str, Any]:
+        data = dataclasses.asdict(self)
+        for key in ("phase04_results", "phase05_results", "component_traces"):
+            data[key] = Path(data[key]).as_posix()
+        return data
+
+
+def load_visualization_config(path: Path) -> VisualizationConfig:
+    """Load and validate a YAML visualization configuration file."""
+    try:
+        with path.open(encoding="utf-8") as handle:
+            data = yaml.safe_load(handle)
+    except FileNotFoundError as exc:
+        raise ConfigError(f"config file not found: {path}") from exc
+    except yaml.YAMLError as exc:
+        raise ConfigError(f"invalid YAML in {path}: {exc}") from exc
+    return parse_visualization_config(data)
+
+
+def _relative_path(data: Mapping[str, Any], key: str, where: str) -> Path:
+    value = data[key]
+    if not isinstance(value, str) or not value.strip():
+        raise ConfigError(f"{where}.{key}: expected a non-empty path, got {value!r}")
+    path = Path(value)
+    # Relative paths only: no machine-specific absolute paths in configs (CLAUDE.md).
+    if path.is_absolute() or path.drive or value.startswith(("/", "\\")):
+        raise ConfigError(f"{where}.{key}: must be a relative path, got {value!r}")
+    return path
+
+
+def parse_visualization_config(value: Any) -> VisualizationConfig:
+    """Validate a visualization configuration mapping."""
+    top = _mapping(
+        value, "visualization", ("inputs", "training_curve", "selection", "figure")
+    )
+    inputs = _mapping(
+        top["inputs"],
+        "inputs",
+        ("phase04_results", "phase05_results", "component_traces"),
+    )
+    curve = _mapping(top["training_curve"], "training_curve", ("rolling_episodes",))
+    selection = _mapping(
+        top["selection"], "selection", ("trace_episode", "video_episode")
+    )
+    figure = _mapping(top["figure"], "figure", ("dpi",))
+    return VisualizationConfig(
+        phase04_results=_relative_path(inputs, "phase04_results", "inputs"),
+        phase05_results=_relative_path(inputs, "phase05_results", "inputs"),
+        component_traces=_relative_path(inputs, "component_traces", "inputs"),
+        rolling_episodes=_int(curve, "rolling_episodes", "training_curve", minimum=1),
+        trace_episode=_int(selection, "trace_episode", "selection", minimum=0),
+        video_episode=_int(selection, "video_episode", "selection", minimum=0),
+        dpi=_int(figure, "dpi", "figure", minimum=50),
+    )
