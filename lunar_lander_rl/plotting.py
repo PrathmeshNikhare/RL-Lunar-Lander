@@ -77,6 +77,7 @@ PLOT_STYLE: Final[dict[RcKeyType, Any]] = {
 }
 _GROUP_GAP: Final[float] = 1.0  # empty slots between configuration groups
 _JITTER_WIDTH: Final[float] = 0.55
+_PAIR_OFFSET: Final[float] = 0.14  # training/evaluation markers either side of a run
 _GOLDEN: Final[float] = 0.6180339887498949  # deterministic, evenly spread jitter
 _CHARS_PER_INCH: Final[float] = 17.0  # caption wrap width at CAPTION_FONT_SIZE
 _LINE_INCHES: Final[float] = 0.135  # caption line height at CAPTION_FONT_SIZE
@@ -147,9 +148,18 @@ def _figure(width: float, height: float, title: str, caption: str) -> Figure:
     return fig
 
 
-def _panel_title(ax: Axes, name: str, description: str, colour: str) -> None:
+def _description_lines(description: str) -> int:
+    return textwrap.fill(description, width=_TITLE_WRAP).count("\n") + 1
+
+
+def _panel_title(
+    ax: Axes, name: str, description: str, colour: str, lines: int = 0
+) -> None:
+    """Name plus wrapped description, padded to ``lines`` description lines."""
+    text = textwrap.fill(description, width=_TITLE_WRAP)
+    text += "\n" * max(0, lines - (text.count("\n") + 1))
     ax.set_title(
-        name + "\n" + textwrap.fill(description, width=_TITLE_WRAP),
+        name + "\n" + text,
         loc="left",
         fontsize=8.5,
         color=colour,
@@ -188,9 +198,17 @@ def _positions(
 
 
 def _run_axis(
-    ax: Axes, experiments: Sequence[str], seeds: Sequence[int]
+    ax: Axes,
+    experiments: Sequence[str],
+    seeds: Sequence[int],
+    *,
+    coloured_labels: bool = True,
 ) -> dict[tuple[str, int], float]:
-    """Seed ticks within configuration groups, group names below the ticks."""
+    """Seed ticks within configuration groups, group names below the ticks.
+
+    ``coloured_labels=False`` writes the group names in neutral text, for
+    figures whose marks use the same colour slots for something else.
+    """
     positions = _positions(experiments, seeds)
     ax.set_xticks(
         [positions[k] for k in positions],
@@ -209,7 +227,7 @@ def _run_axis(
             ha="center",
             va="top",
             fontsize=9,
-            color=config_color(i),
+            color=config_color(i) if coloured_labels else TEXT,
             fontweight="bold",
         )
     ax.set_xlim(-0.7, max(positions.values()) + 0.7)
@@ -283,6 +301,7 @@ def training_component_figure(
         "results/phase04/<experiment>/seed<N>/reward_components.csv.",
     )
     axes = fig.subplots(1, len(experiments), sharex=True, squeeze=False)[0]
+    lines = max(_description_lines(descriptions[e]) for e in experiments)
     for ax, experiment in zip(axes, experiments, strict=True):
         for j, (seed, curve) in enumerate(curves[experiment].items()):
             colour, style = seed_style(j)
@@ -291,9 +310,9 @@ def training_component_figure(
                 curve.values,
                 color=colour,
                 linestyle=style,
-                label=f"seed {seed}",
+                label=f"seed {seed} (n = {curve.n_episodes:,})",
             )
-        _panel_title(ax, experiment, descriptions[experiment], TEXT)
+        _panel_title(ax, experiment, descriptions[experiment], TEXT, lines)
         ax.set_ylabel(f"Custom term per training episode\n(trailing mean of {window})")
         ax.set_xlabel("Environment steps (millions)")
         ax.legend(loc="best")
@@ -377,7 +396,7 @@ def outcome_figure(
         caption,
     )
     ax = fig.subplots()
-    positions = _run_axis(ax, experiments, seeds)
+    positions = _run_axis(ax, experiments, seeds, coloured_labels=False)
     for k, outcome in enumerate(outcomes):
         colour = CATEGORICAL[k]
         for experiment in experiments:
@@ -447,9 +466,10 @@ def training_vs_evaluation_figure(
         for seed in seeds:
             training, evaluation, n_training = rows[experiment][seed]
             x = positions[(experiment, seed)]
-            ax.plot([x, x], [training, evaluation], color=GRID, linewidth=2, zorder=1)
+            xt, xe = x - _PAIR_OFFSET, x + _PAIR_OFFSET  # side by side, never hidden
+            ax.plot([xt, xe], [training, evaluation], color=GRID, linewidth=2, zorder=1)
             ax.scatter(
-                [x],
+                [xt],
                 [training],
                 s=46,
                 facecolors=SURFACE,
@@ -457,11 +477,12 @@ def training_vs_evaluation_figure(
                 linewidths=1.8,
                 zorder=2,
             )
-            ax.scatter([x], [evaluation], s=46, color=colour, zorder=3)
+            ax.scatter([xe], [evaluation], s=46, color=colour, zorder=3)
             ax.annotate(
                 f"n={n_training}",
-                (x, training),
-                xytext=(7, 0),
+                (xt, training),
+                xytext=(-7, 0),
+                ha="right",
                 textcoords="offset points",
                 fontsize=6.5,
                 color=TEXT_SECONDARY,
@@ -478,7 +499,7 @@ def training_vs_evaluation_figure(
             markeredgecolor=TEXT_SECONDARY,
             markersize=7,
             label=f"training: episodes ending at step >= {window_start:,} "
-            "(stochastic policy; n per run shown)",
+            "(window chosen post hoc, D-035; stochastic policy; n per run shown)",
         ),
         Line2D(
             [],
@@ -510,9 +531,12 @@ def trace_figure(
         caption + f" Dotted line in the bottom row: {reference_height.label}.",
     )
     axes = fig.subplots(3, len(experiments), sharex="col", squeeze=False)
+    n_lines = max(_description_lines(descriptions[e]) for e in experiments)
     for col, experiment in enumerate(experiments):
         top, middle, bottom = axes[0][col], axes[1][col], axes[2][col]
-        _panel_title(top, experiment, descriptions[experiment], config_color(col))
+        _panel_title(
+            top, experiment, descriptions[experiment], config_color(col), n_lines
+        )
         has_custom = False
         handles: list[Artist] = []
         for j, (_, trace) in enumerate(traces[experiment].items()):

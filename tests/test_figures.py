@@ -336,3 +336,21 @@ def test_palette_slots_are_fixed_and_bounded() -> None:
         config_color(4)
     with pytest.raises(ValueError):
         seed_style(3)
+
+
+def test_outcome_groups_are_neutral_and_paired_markers_do_not_overlap(
+    tmp_path: Path,
+) -> None:
+    figures, _ = build_figures(_results(tmp_path))
+    (outcome_ax,) = figures["04_evaluation_outcomes"].axes
+    group_labels = [t for t in outcome_ax.texts if t.get_text() in EXPERIMENTS]
+    assert group_labels
+    # Outcome segments use the configuration colour slots, so names stay neutral.
+    assert {t.get_color() for t in group_labels} == {"#0b0b0b"}
+    (tve_ax,) = figures["07_training_vs_evaluation"].axes
+    xs = [
+        float(np.asarray(c.get_offsets())[0, 0])
+        for c in tve_ax.collections
+        if isinstance(c, PathCollection)
+    ]
+    assert len(xs) == len(set(xs))  # training and evaluation markers side by side
