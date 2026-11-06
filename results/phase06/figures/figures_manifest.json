@@ -1,0 +1,623 @@
+{
+  "created_at": "2026-11-06T20:00:19.268360+00:00",
+  "visualization_config": {
+    "phase04_results": "results/phase04",
+    "phase05_results": "results/phase05",
+    "component_traces": "results/phase06/component_traces.csv",
+    "rolling_episodes": 100,
+    "trace_episode": 0,
+    "video_episode": 0,
+    "dpi": 150
+  },
+  "inputs": {
+    "comparison": {
+      "path": "results/phase05/comparison.json",
+      "sha256": "bbeb481fa9a5f5cbe71eada9c7ddd97d9b9e9d967a62ba925e33ddeeea37b5ad"
+    },
+    "component_traces": {
+      "path": "results/phase06/component_traces.csv",
+      "sha256": "c6d6305362215af6417da7237a2e06b000cd6c1820fe56b189ee92f3813bfe5d"
+    },
+    "component_traces_json": {
+      "path": "results/phase06/component_traces.json",
+      "sha256": "25b55f5f783a9edc5b57e2efd8f385b96e38229cc7fbe4c827c3c1c390734f46"
+    },
+    "config_summary": {
+      "path": "results/phase05/config_summary.csv",
+      "sha256": "90c3dc784932cce924ffaf84281a3e3897fcee3c771c40ee8f10b695232862ac"
+    },
+    "episode_metrics": {
+      "path": "results/phase05/episode_metrics.csv",
+      "sha256": "4f9e32f5b08f64a77b8f903cec3b952c3afbea13bd0b06f73063098ccb14c5a9"
+    },
+    "run_config:baseline:142": {
+      "path": "results/phase04/baseline/seed142/run_config.json",
+      "sha256": "e9851ca3c87049d93b67d5ee86d4c0bf28b86a90f2ab433ef1e6b5f586d3b8ac"
+    },
+    "run_config:baseline:242": {
+      "path": "results/phase04/baseline/seed242/run_config.json",
+      "sha256": "326ac0bf04b369e08e9b3b9db571bd93d8eb7d603bff1fdcef265577355badb6"
+    },
+    "run_config:baseline:42": {
+      "path": "results/phase04/baseline/seed42/run_config.json",
+      "sha256": "b04137d3e3f82262ac17a0d8be5498b10f63f9549d5c4b25e61b080675d464c1"
+    },
+    "run_config:potential_shaping:142": {
+      "path": "results/phase04/potential_shaping/seed142/run_config.json",
+      "sha256": "c295e16d7c4545c4d68e010f2aac34fd6a2d9c9f34e7d7b40d0e2e803b551e03"
+    },
+    "run_config:potential_shaping:242": {
+      "path": "results/phase04/potential_shaping/seed242/run_config.json",
+      "sha256": "b8685c454b6c47046ded0870d192ade6fa007b5924bcd21c66c08496824ac632"
+    },
+    "run_config:potential_shaping:42": {
+      "path": "results/phase04/potential_shaping/seed42/run_config.json",
+      "sha256": "c2da8ba5fe8efec57c3eae39d5e45fa144d69e74d94298480a6df482da8ec042"
+    },
+    "run_config:time_penalty:142": {
+      "path": "results/phase04/time_penalty/seed142/run_config.json",
+      "sha256": "64b782c619ae556056940db982347c51027883f699fae975210e562c0e251e2a"
+    },
+    "run_config:time_penalty:242": {
+      "path": "results/phase04/time_penalty/seed242/run_config.json",
+      "sha256": "464f650705585606eb892e0b2ed01d7aa175589e8e2799b4be8899d6bc5abcf4"
+    },
+    "run_config:time_penalty:42": {
+      "path": "results/phase04/time_penalty/seed42/run_config.json",
+      "sha256": "8c7c5c83a0b09e072cc7b38761e2146eacac9f41a8b92f258ea2a5a6dee373dc"
+    },
+    "run_config:upright_slow_bonus:142": {
+      "path": "results/phase04/upright_slow_bonus/seed142/run_config.json",
+      "sha256": "dd2648fd358e06ad89a415f306d0a7967d8574bbea2fdc4de7842064151fa516"
+    },
+    "run_config:upright_slow_bonus:242": {
+      "path": "results/phase04/upright_slow_bonus/seed242/run_config.json",
+      "sha256": "e2af239cbc8973e15d91ed0bb22249f62637c4bbcf800bc25932e7d7402a4312"
+    },
+    "run_config:upright_slow_bonus:42": {
+      "path": "results/phase04/upright_slow_bonus/seed42/run_config.json",
+      "sha256": "f1610d084285b1dff4b02a6632ca47dbd83f59ce26500b7a85421af3cde3a189"
+    },
+    "training:baseline:142": {
+      "path": "results/phase04/baseline/seed142/reward_components.csv",
+      "sha256": "f89c4396c5e42f8b1e9d240fb22ad48302f6f02bfcb015a16b440c95ee0d75fb"
+    },
+    "training:baseline:242": {
+      "path": "results/phase04/baseline/seed242/reward_components.csv",
+      "sha256": "bd63f6fc8c31c0eb776c06e364b52bc4901bda68dfe8a5020bbfa3bc70a4ee81"
+    },
+    "training:baseline:42": {
+      "path": "results/phase04/baseline/seed42/reward_components.csv",
+      "sha256": "730ea5d5aacb42671e3103f4cf456a0265a18abe379fb67313ed54d5c369cd0a"
+    },
+    "training:potential_shaping:142": {
+      "path": "results/phase04/potential_shaping/seed142/reward_components.csv",
+      "sha256": "3cb62caa3bf167bc9410d4b71f03698c37463d44e8a20c72025aee695546ac95"
+    },
+    "training:potential_shaping:242": {
+      "path": "results/phase04/potential_shaping/seed242/reward_components.csv",
+      "sha256": "75d374c13587f4f6690c65f76f1f0fcd9dc4c2cf94f78e751bda1c150eab4451"
+    },
+    "training:potential_shaping:42": {
+      "path": "results/phase04/potential_shaping/seed42/reward_components.csv",
+      "sha256": "3975faf69ba607937083a0552fce70819e79a1dc34b271c161931a582bbbd5fc"
+    },
+    "training:time_penalty:142": {
+      "path": "results/phase04/time_penalty/seed142/reward_components.csv",
+      "sha256": "92627c0c44cf09f3a011bdd5985ab89909c3574cf369bd6a036fdeb974944cd2"
+    },
+    "training:time_penalty:242": {
+      "path": "results/phase04/time_penalty/seed242/reward_components.csv",
+      "sha256": "955ccea3f2701e08fc09a441a313c244b79ec3769966b750c61478999f558479"
+    },
+    "training:time_penalty:42": {
+      "path": "results/phase04/time_penalty/seed42/reward_components.csv",
+      "sha256": "2f895941d0a3dc31251416dc18f4f6c0037b042385395c867f476f283289b479"
+    },
+    "training:upright_slow_bonus:142": {
+      "path": "results/phase04/upright_slow_bonus/seed142/reward_components.csv",
+      "sha256": "40c2a1ed326e69294a8f082fd9753df5f1bca6fbb3ef8cfe9f2cf5d3b88c49d0"
+    },
+    "training:upright_slow_bonus:242": {
+      "path": "results/phase04/upright_slow_bonus/seed242/reward_components.csv",
+      "sha256": "8fe835045edc62bd8c7bdec1aa9adb8df30ee1925bce32b4614d6bc395d8e87a"
+    },
+    "training:upright_slow_bonus:42": {
+      "path": "results/phase04/upright_slow_bonus/seed42/reward_components.csv",
+      "sha256": "ff74fa4a5c32d9bb7faa9da6117e6160157944099848ca7c0158e5adcb4f8e06"
+    },
+    "training_vs_evaluation": {
+      "path": "results/phase05/training_vs_evaluation.csv",
+      "sha256": "4580df95c1215ab41037013dec5062c2ac8b53e371919c8eb6d1b0cd40f61eb7"
+    }
+  },
+  "figures": {
+    "01_training_original_reward": {
+      "shows": "rolling mean of the original reward per training episode",
+      "rolling_episodes": 100,
+      "n_training_episodes": {
+        "baseline:42": 3025,
+        "baseline:142": 3382,
+        "baseline:242": 3257,
+        "time_penalty:42": 3076,
+        "time_penalty:142": 3216,
+        "time_penalty:242": 3023,
+        "upright_slow_bonus:42": 2782,
+        "upright_slow_bonus:142": 2771,
+        "upright_slow_bonus:242": 2993,
+        "potential_shaping:42": 2943,
+        "potential_shaping:142": 2753,
+        "potential_shaping:242": 3020
+      },
+      "file": "01_training_original_reward.png",
+      "sha256": "09e48b519e93b514df9ffe385954be98e0a54a6cc2434677757bd64e882bca0e"
+    },
+    "02_training_custom_terms": {
+      "shows": "rolling mean of each custom term per training episode",
+      "components": {
+        "time_penalty": "time_penalty",
+        "upright_slow_bonus": "upright_slow_bonus",
+        "potential_shaping": "potential_shaping"
+      },
+      "rolling_episodes": 100,
+      "file": "02_training_custom_terms.png",
+      "sha256": "b2703273255f118cdad0e18b5a32f794546ea9e61b4c47f2b6bf25cfbe6e4be1"
+    },
+    "03_evaluation_returns": {
+      "n_per_run": 100,
+      "group_notes": {
+        "baseline": "mean of 3 run means: 243.9 (sample std 9.5)",
+        "time_penalty": "mean of 3 run means: 259.2 (sample std 12.5)",
+        "upright_slow_bonus": "mean of 3 run means: 3.0 (sample std 149.7)",
+        "potential_shaping": "mean of 3 run means: 245.8 (sample std 8.6)"
+      },
+      "file": "03_evaluation_returns.png",
+      "sha256": "e882991391bab0a5d2fa4288700afd07c8095bdc05dd04dd167217bb96fe6000"
+    },
+    "04_evaluation_outcomes": {
+      "n_per_run": 100,
+      "counts": {
+        "baseline": {
+          "42": {
+            "success": 91,
+            "rest_off_pad": 4,
+            "crash": 2,
+            "out_of_bounds": 0,
+            "timeout": 3
+          },
+          "142": {
+            "success": 100,
+            "rest_off_pad": 0,
+            "crash": 0,
+            "out_of_bounds": 0,
+            "timeout": 0
+          },
+          "242": {
+            "success": 100,
+            "rest_off_pad": 0,
+            "crash": 0,
+            "out_of_bounds": 0,
+            "timeout": 0
+          }
+        },
+        "time_penalty": {
+          "42": {
+            "success": 96,
+            "rest_off_pad": 0,
+            "crash": 0,
+            "out_of_bounds": 0,
+            "timeout": 4
+          },
+          "142": {
+            "success": 100,
+            "rest_off_pad": 0,
+            "crash": 0,
+            "out_of_bounds": 0,
+            "timeout": 0
+          },
+          "242": {
+            "success": 100,
+            "rest_off_pad": 0,
+            "crash": 0,
+            "out_of_bounds": 0,
+            "timeout": 0
+          }
+        },
+        "upright_slow_bonus": {
+          "42": {
+            "success": 91,
+            "rest_off_pad": 1,
+            "crash": 1,
+            "out_of_bounds": 0,
+            "timeout": 7
+          },
+          "142": {
+            "success": 1,
+            "rest_off_pad": 0,
+            "crash": 0,
+            "out_of_bounds": 0,
+            "timeout": 99
+          },
+          "242": {
+            "success": 0,
+            "rest_off_pad": 0,
+            "crash": 0,
+            "out_of_bounds": 0,
+            "timeout": 100
+          }
+        },
+        "potential_shaping": {
+          "42": {
+            "success": 97,
+            "rest_off_pad": 0,
+            "crash": 3,
+            "out_of_bounds": 0,
+            "timeout": 0
+          },
+          "142": {
+            "success": 100,
+            "rest_off_pad": 0,
+            "crash": 0,
+            "out_of_bounds": 0,
+            "timeout": 0
+          },
+          "242": {
+            "success": 98,
+            "rest_off_pad": 0,
+            "crash": 0,
+            "out_of_bounds": 0,
+            "timeout": 2
+          }
+        }
+      },
+      "file": "04_evaluation_outcomes.png",
+      "sha256": "a5e483c6ff6b3be89dfbd4fd453de1fca3725f00e255120c9d291339ea3f099f"
+    },
+    "05_episode_lengths": {
+      "n_per_run": 100,
+      "time_limit": 1000,
+      "file": "05_episode_lengths.png",
+      "sha256": "03e7efb003344c1299b393714cfea3b4cf5f3678d1ff4856f38c240558e03aa7"
+    },
+    "06_hover_diagnostic": {
+      "n_per_run": 100,
+      "pre_registered_threshold": 100,
+      "post_hoc_line": 192,
+      "post_hoc_reference_experiment": "baseline",
+      "file": "06_hover_diagnostic.png",
+      "sha256": "fa48dd1c31c763f1341c65be60c3664fe1ef9c54cee5b8c9597ed101367ef146"
+    },
+    "07_training_vs_evaluation": {
+      "window_start_timestep": 900000,
+      "file": "07_training_vs_evaluation.png",
+      "sha256": "eb34d42d156ce78a2a7cac15e46d785f9ceb0e2f15c0069b1f4b0c14ef70ac7e"
+    },
+    "08_episode_traces": {
+      "evaluation_episode": 0,
+      "env_seed": 10000,
+      "episodes": [
+        {
+          "experiment_id": "baseline",
+          "training_seed": 42,
+          "run_dir": "20261103T215416Z_seed42",
+          "evaluation_session": "20261105T094138Z",
+          "episode": 0,
+          "env_seed": 10000,
+          "trajectories_sha256": "6b1ccc70b2e21613972529b66f46467d0aa71951e3c9610a805d44d276468bde",
+          "reward": {
+            "mode": "original"
+          },
+          "gamma": 0.999,
+          "length": 346,
+          "terminated": true,
+          "truncated": false,
+          "outcome": "success",
+          "original_return": 246.77491428041535,
+          "custom_component": null,
+          "custom_total": null,
+          "training_reward_total": 246.7749142804151
+        },
+        {
+          "experiment_id": "baseline",
+          "training_seed": 142,
+          "run_dir": "20261103T221354Z_seed142",
+          "evaluation_session": "20261105T094153Z",
+          "episode": 0,
+          "env_seed": 10000,
+          "trajectories_sha256": "9c5730f7109ce8eb5a3dc5f8be44757200712a006c648f11c19d413818badf25",
+          "reward": {
+            "mode": "original"
+          },
+          "gamma": 0.999,
+          "length": 430,
+          "terminated": true,
+          "truncated": false,
+          "outcome": "success",
+          "original_return": 233.49623816177743,
+          "custom_component": null,
+          "custom_total": null,
+          "training_reward_total": 233.4962381617773
+        },
+        {
+          "experiment_id": "baseline",
+          "training_seed": 242,
+          "run_dir": "20261103T223219Z_seed242",
+          "evaluation_session": "20261105T094209Z",
+          "episode": 0,
+          "env_seed": 10000,
+          "trajectories_sha256": "24f208abf2a34a507c6d8327f72ffa1fc19c64e825494f76e8a8dc7485a3edb2",
+          "reward": {
+            "mode": "original"
+          },
+          "gamma": 0.999,
+          "length": 345,
+          "terminated": true,
+          "truncated": false,
+          "outcome": "success",
+          "original_return": 244.76776435450918,
+          "custom_component": null,
+          "custom_total": null,
+          "training_reward_total": 244.7677643545091
+        },
+        {
+          "experiment_id": "time_penalty",
+          "training_seed": 42,
+          "run_dir": "20261103T215919Z_seed42",
+          "evaluation_session": "20261105T094308Z",
+          "episode": 0,
+          "env_seed": 10000,
+          "trajectories_sha256": "e95e22c758a6ba6e81f1cb553742c815bc07e33514f411198bfdd2b98cf6a959",
+          "reward": {
+            "mode": "time_penalty",
+            "coefficient": 0.05
+          },
+          "gamma": 0.999,
+          "length": 327,
+          "terminated": true,
+          "truncated": false,
+          "outcome": "success",
+          "original_return": 255.55823366340127,
+          "custom_component": "time_penalty",
+          "custom_total": -16.35,
+          "training_reward_total": 239.20823366340116
+        },
+        {
+          "experiment_id": "time_penalty",
+          "training_seed": 142,
+          "run_dir": "20261103T221837Z_seed142",
+          "evaluation_session": "20261105T094322Z",
+          "episode": 0,
+          "env_seed": 10000,
+          "trajectories_sha256": "abf97fc25ec811708882223ac57a06aab2145e5db5e2e1acc8f30db798cb9582",
+          "reward": {
+            "mode": "time_penalty",
+            "coefficient": 0.05
+          },
+          "gamma": 0.999,
+          "length": 278,
+          "terminated": true,
+          "truncated": false,
+          "outcome": "success",
+          "original_return": 250.98240832666065,
+          "custom_component": "time_penalty",
+          "custom_total": -13.9,
+          "training_reward_total": 237.08240832666044
+        },
+        {
+          "experiment_id": "time_penalty",
+          "training_seed": 242,
+          "run_dir": "20261104T181910Z_seed242",
+          "evaluation_session": "20261105T094349Z",
+          "episode": 0,
+          "env_seed": 10000,
+          "trajectories_sha256": "7d85a908037998535e246a8c52fcff11cc04861e290c79ce6be2f19bb0b7a01b",
+          "reward": {
+            "mode": "time_penalty",
+            "coefficient": 0.05
+          },
+          "gamma": 0.999,
+          "length": 295,
+          "terminated": true,
+          "truncated": false,
+          "outcome": "success",
+          "original_return": 262.13293625578376,
+          "custom_component": "time_penalty",
+          "custom_total": -14.75,
+          "training_reward_total": 247.3829362557836
+        },
+        {
+          "experiment_id": "upright_slow_bonus",
+          "training_seed": 42,
+          "run_dir": "20261103T220405Z_seed42",
+          "evaluation_session": "20261105T094413Z",
+          "episode": 0,
+          "env_seed": 10000,
+          "trajectories_sha256": "d0063de7ccb55d849c37983970caf5f202e3993798299a9d7dc7a856f502ba9b",
+          "reward": {
+            "mode": "upright_slow_bonus",
+            "bonus": 1.0,
+            "max_abs_angle": 0.2,
+            "max_speed": 0.2
+          },
+          "gamma": 0.999,
+          "length": 1000,
+          "terminated": false,
+          "truncated": true,
+          "outcome": "timeout",
+          "original_return": 93.1376238563026,
+          "custom_component": "upright_slow_bonus",
+          "custom_total": 877.0,
+          "training_reward_total": 970.1376238563023
+        },
+        {
+          "experiment_id": "upright_slow_bonus",
+          "training_seed": 142,
+          "run_dir": "20261103T222308Z_seed142",
+          "evaluation_session": "20261105T094518Z",
+          "episode": 0,
+          "env_seed": 10000,
+          "trajectories_sha256": "60fe29645cd6f6422877f32c0a19f55a9e4e4a50981e7b772d6bce9e3108b478",
+          "reward": {
+            "mode": "upright_slow_bonus",
+            "bonus": 1.0,
+            "max_abs_angle": 0.2,
+            "max_speed": 0.2
+          },
+          "gamma": 0.999,
+          "length": 1000,
+          "terminated": false,
+          "truncated": true,
+          "outcome": "timeout",
+          "original_return": -30.75237456203362,
+          "custom_component": "upright_slow_bonus",
+          "custom_total": 953.0,
+          "training_reward_total": 922.2476254379667
+        },
+        {
+          "experiment_id": "upright_slow_bonus",
+          "training_seed": 242,
+          "run_dir": "20261104T182401Z_seed242",
+          "evaluation_session": "20261105T094635Z",
+          "episode": 0,
+          "env_seed": 10000,
+          "trajectories_sha256": "7a79f868319c43bb42c66cff46d8584f9e32cf46b0372d992c2aec9db91e9ffc",
+          "reward": {
+            "mode": "upright_slow_bonus",
+            "bonus": 1.0,
+            "max_abs_angle": 0.2,
+            "max_speed": 0.2
+          },
+          "gamma": 0.999,
+          "length": 1000,
+          "terminated": false,
+          "truncated": true,
+          "outcome": "timeout",
+          "original_return": -91.11390410816037,
+          "custom_component": "upright_slow_bonus",
+          "custom_total": 954.0,
+          "training_reward_total": 862.8860958918393
+        },
+        {
+          "experiment_id": "potential_shaping",
+          "training_seed": 42,
+          "run_dir": "20261103T220904Z_seed42",
+          "evaluation_session": "20261105T094223Z",
+          "episode": 0,
+          "env_seed": 10000,
+          "trajectories_sha256": "91393df9a280a53233230762696bedc0bdd977d293c980920d9a6297b83af411",
+          "reward": {
+            "mode": "potential_based",
+            "alpha": 100.0,
+            "distance_weight": 1.0,
+            "speed_weight": 1.0,
+            "angle_weight": 1.0
+          },
+          "gamma": 0.999,
+          "length": 318,
+          "terminated": true,
+          "truncated": false,
+          "outcome": "success",
+          "original_return": 258.23742310326156,
+          "custom_component": "potential_shaping",
+          "custom_total": 215.13103022489548,
+          "training_reward_total": 473.3684533281568
+        },
+        {
+          "experiment_id": "potential_shaping",
+          "training_seed": 142,
+          "run_dir": "20261103T222742Z_seed142",
+          "evaluation_session": "20261105T094237Z",
+          "episode": 0,
+          "env_seed": 10000,
+          "trajectories_sha256": "83adf4b6336d43b6968812e3668d3cf2aa5643b5197ce0eb3ae55a4c51160a61",
+          "reward": {
+            "mode": "potential_based",
+            "alpha": 100.0,
+            "distance_weight": 1.0,
+            "speed_weight": 1.0,
+            "angle_weight": 1.0
+          },
+          "gamma": 0.999,
+          "length": 356,
+          "terminated": true,
+          "truncated": false,
+          "outcome": "success",
+          "original_return": 249.6323933045832,
+          "custom_component": "potential_shaping",
+          "custom_total": 216.26866657996115,
+          "training_reward_total": 465.9010598845441
+        },
+        {
+          "experiment_id": "potential_shaping",
+          "training_seed": 242,
+          "run_dir": "20261104T183327Z_seed242",
+          "evaluation_session": "20261105T094252Z",
+          "episode": 0,
+          "env_seed": 10000,
+          "trajectories_sha256": "8fd46355546111077787e49fae9775b8665eb17e91596bfc1a7f57333b8868ff",
+          "reward": {
+            "mode": "potential_based",
+            "alpha": 100.0,
+            "distance_weight": 1.0,
+            "speed_weight": 1.0,
+            "angle_weight": 1.0
+          },
+          "gamma": 0.999,
+          "length": 393,
+          "terminated": true,
+          "truncated": false,
+          "outcome": "success",
+          "original_return": 232.8102722237197,
+          "custom_component": "potential_shaping",
+          "custom_total": 215.3278929882215,
+          "training_reward_total": 448.1381652119409
+        }
+      ],
+      "file": "08_episode_traces.png",
+      "sha256": "acd80028e6759b0e5ee258e18c25c846fdb0d8316100f0451b88c7a754819da7"
+    }
+  },
+  "python": "3.12.5",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "gymnasium": "1.4.0",
+    "Box2D": "2.3.10",
+    "stable-baselines3": "2.9.2",
+    "torch": "2.15.0",
+    "numpy": "2.5.4",
+    "tensorboard": "2.21.0",
+    "moviepy": "2.2.1",
+    "pillow": "11.3.0",
+    "PyYAML": "6.0.3"
+  },
+  "source": {
+    "commit": "892252a3cfbdc1e520052b826d49e07b2fd04088",
+    "dirty": true,
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked": [
+      "results/phase06/component_traces.csv",
+      "results/phase06/component_traces.json",
+      "results/phase06/videos/baseline_seed142_video-episode0.mp4",
+      "results/phase06/videos/baseline_seed242_video-episode0.mp4",
+      "results/phase06/videos/baseline_seed42_video-episode0.mp4",
+      "results/phase06/videos/potential_shaping_seed142_video-episode0.mp4",
+      "results/phase06/videos/potential_shaping_seed242_video-episode0.mp4",
+      "results/phase06/videos/potential_shaping_seed42_video-episode0.mp4",
+      "results/phase06/videos/time_penalty_seed142_video-episode0.mp4",
+      "results/phase06/videos/time_penalty_seed242_video-episode0.mp4",
+      "results/phase06/videos/time_penalty_seed42_video-episode0.mp4",
+      "results/phase06/videos/upright_slow_bonus_seed142_video-episode0.mp4",
+      "results/phase06/videos/upright_slow_bonus_seed242_video-episode0.mp4",
+      "results/phase06/videos/upright_slow_bonus_seed42_video-episode0.mp4",
+      "results/phase06/videos/videos.csv",
+      "results/phase06/videos/videos.json"
+    ]
+  },
+  "argv": [
+    "scripts/make_figures.py",
+    "--config",
+    "configs/visualization.yaml",
+    "--output",
+    "results/phase06/figures"
+  ]
+}

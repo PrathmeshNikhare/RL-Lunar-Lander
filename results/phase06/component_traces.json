@@ -1,0 +1,323 @@
+{
+  "created_at": "2026-11-06T19:24:15.148278+00:00",
+  "description": "Per-step original reward and training-reward terms for one fixed evaluation episode per run, replayed through RewardComponentsWrapper from the Phase 05 evaluation trajectories. Observations are the state after each step. Evaluation itself used the original reward. Rows are keyed by experiment_id and training_seed; each episode's run directory, evaluation session, index and env seed are under episodes.",
+  "visualization_config": {
+    "phase04_results": "results/phase04",
+    "phase05_results": "results/phase05",
+    "component_traces": "results/phase06/component_traces.csv",
+    "rolling_episodes": 100,
+    "trace_episode": 0,
+    "video_episode": 0,
+    "dpi": 150
+  },
+  "inputs": {
+    "comparison_json_sha256": "bbeb481fa9a5f5cbe71eada9c7ddd97d9b9e9d967a62ba925e33ddeeea37b5ad",
+    "episode_metrics_sha256": "4f9e32f5b08f64a77b8f903cec3b952c3afbea13bd0b06f73063098ccb14c5a9"
+  },
+  "output_csv_sha256": "c6d6305362215af6417da7237a2e06b000cd6c1820fe56b189ee92f3813bfe5d",
+  "n_rows": 6088,
+  "episodes": [
+    {
+      "experiment_id": "baseline",
+      "training_seed": 42,
+      "run_dir": "20261103T215416Z_seed42",
+      "evaluation_session": "20261105T094138Z",
+      "episode": 0,
+      "env_seed": 10000,
+      "trajectories_sha256": "6b1ccc70b2e21613972529b66f46467d0aa71951e3c9610a805d44d276468bde",
+      "reward": {
+        "mode": "original"
+      },
+      "gamma": 0.999,
+      "length": 346,
+      "terminated": true,
+      "truncated": false,
+      "outcome": "success",
+      "original_return": 246.77491428041535,
+      "custom_component": null,
+      "custom_total": null,
+      "training_reward_total": 246.7749142804151
+    },
+    {
+      "experiment_id": "baseline",
+      "training_seed": 142,
+      "run_dir": "20261103T221354Z_seed142",
+      "evaluation_session": "20261105T094153Z",
+      "episode": 0,
+      "env_seed": 10000,
+      "trajectories_sha256": "9c5730f7109ce8eb5a3dc5f8be44757200712a006c648f11c19d413818badf25",
+      "reward": {
+        "mode": "original"
+      },
+      "gamma": 0.999,
+      "length": 430,
+      "terminated": true,
+      "truncated": false,
+      "outcome": "success",
+      "original_return": 233.49623816177743,
+      "custom_component": null,
+      "custom_total": null,
+      "training_reward_total": 233.4962381617773
+    },
+    {
+      "experiment_id": "baseline",
+      "training_seed": 242,
+      "run_dir": "20261103T223219Z_seed242",
+      "evaluation_session": "20261105T094209Z",
+      "episode": 0,
+      "env_seed": 10000,
+      "trajectories_sha256": "24f208abf2a34a507c6d8327f72ffa1fc19c64e825494f76e8a8dc7485a3edb2",
+      "reward": {
+        "mode": "original"
+      },
+      "gamma": 0.999,
+      "length": 345,
+      "terminated": true,
+      "truncated": false,
+      "outcome": "success",
+      "original_return": 244.76776435450918,
+      "custom_component": null,
+      "custom_total": null,
+      "training_reward_total": 244.7677643545091
+    },
+    {
+      "experiment_id": "time_penalty",
+      "training_seed": 42,
+      "run_dir": "20261103T215919Z_seed42",
+      "evaluation_session": "20261105T094308Z",
+      "episode": 0,
+      "env_seed": 10000,
+      "trajectories_sha256": "e95e22c758a6ba6e81f1cb553742c815bc07e33514f411198bfdd2b98cf6a959",
+      "reward": {
+        "mode": "time_penalty",
+        "coefficient": 0.05
+      },
+      "gamma": 0.999,
+      "length": 327,
+      "terminated": true,
+      "truncated": false,
+      "outcome": "success",
+      "original_return": 255.55823366340127,
+      "custom_component": "time_penalty",
+      "custom_total": -16.35,
+      "training_reward_total": 239.20823366340116
+    },
+    {
+      "experiment_id": "time_penalty",
+      "training_seed": 142,
+      "run_dir": "20261103T221837Z_seed142",
+      "evaluation_session": "20261105T094322Z",
+      "episode": 0,
+      "env_seed": 10000,
+      "trajectories_sha256": "abf97fc25ec811708882223ac57a06aab2145e5db5e2e1acc8f30db798cb9582",
+      "reward": {
+        "mode": "time_penalty",
+        "coefficient": 0.05
+      },
+      "gamma": 0.999,
+      "length": 278,
+      "terminated": true,
+      "truncated": false,
+      "outcome": "success",
+      "original_return": 250.98240832666065,
+      "custom_component": "time_penalty",
+      "custom_total": -13.9,
+      "training_reward_total": 237.08240832666044
+    },
+    {
+      "experiment_id": "time_penalty",
+      "training_seed": 242,
+      "run_dir": "20261104T181910Z_seed242",
+      "evaluation_session": "20261105T094349Z",
+      "episode": 0,
+      "env_seed": 10000,
+      "trajectories_sha256": "7d85a908037998535e246a8c52fcff11cc04861e290c79ce6be2f19bb0b7a01b",
+      "reward": {
+        "mode": "time_penalty",
+        "coefficient": 0.05
+      },
+      "gamma": 0.999,
+      "length": 295,
+      "terminated": true,
+      "truncated": false,
+      "outcome": "success",
+      "original_return": 262.13293625578376,
+      "custom_component": "time_penalty",
+      "custom_total": -14.75,
+      "training_reward_total": 247.3829362557836
+    },
+    {
+      "experiment_id": "upright_slow_bonus",
+      "training_seed": 42,
+      "run_dir": "20261103T220405Z_seed42",
+      "evaluation_session": "20261105T094413Z",
+      "episode": 0,
+      "env_seed": 10000,
+      "trajectories_sha256": "d0063de7ccb55d849c37983970caf5f202e3993798299a9d7dc7a856f502ba9b",
+      "reward": {
+        "mode": "upright_slow_bonus",
+        "bonus": 1.0,
+        "max_abs_angle": 0.2,
+        "max_speed": 0.2
+      },
+      "gamma": 0.999,
+      "length": 1000,
+      "terminated": false,
+      "truncated": true,
+      "outcome": "timeout",
+      "original_return": 93.1376238563026,
+      "custom_component": "upright_slow_bonus",
+      "custom_total": 877.0,
+      "training_reward_total": 970.1376238563023
+    },
+    {
+      "experiment_id": "upright_slow_bonus",
+      "training_seed": 142,
+      "run_dir": "20261103T222308Z_seed142",
+      "evaluation_session": "20261105T094518Z",
+      "episode": 0,
+      "env_seed": 10000,
+      "trajectories_sha256": "60fe29645cd6f6422877f32c0a19f55a9e4e4a50981e7b772d6bce9e3108b478",
+      "reward": {
+        "mode": "upright_slow_bonus",
+        "bonus": 1.0,
+        "max_abs_angle": 0.2,
+        "max_speed": 0.2
+      },
+      "gamma": 0.999,
+      "length": 1000,
+      "terminated": false,
+      "truncated": true,
+      "outcome": "timeout",
+      "original_return": -30.75237456203362,
+      "custom_component": "upright_slow_bonus",
+      "custom_total": 953.0,
+      "training_reward_total": 922.2476254379667
+    },
+    {
+      "experiment_id": "upright_slow_bonus",
+      "training_seed": 242,
+      "run_dir": "20261104T182401Z_seed242",
+      "evaluation_session": "20261105T094635Z",
+      "episode": 0,
+      "env_seed": 10000,
+      "trajectories_sha256": "7a79f868319c43bb42c66cff46d8584f9e32cf46b0372d992c2aec9db91e9ffc",
+      "reward": {
+        "mode": "upright_slow_bonus",
+        "bonus": 1.0,
+        "max_abs_angle": 0.2,
+        "max_speed": 0.2
+      },
+      "gamma": 0.999,
+      "length": 1000,
+      "terminated": false,
+      "truncated": true,
+      "outcome": "timeout",
+      "original_return": -91.11390410816037,
+      "custom_component": "upright_slow_bonus",
+      "custom_total": 954.0,
+      "training_reward_total": 862.8860958918393
+    },
+    {
+      "experiment_id": "potential_shaping",
+      "training_seed": 42,
+      "run_dir": "20261103T220904Z_seed42",
+      "evaluation_session": "20261105T094223Z",
+      "episode": 0,
+      "env_seed": 10000,
+      "trajectories_sha256": "91393df9a280a53233230762696bedc0bdd977d293c980920d9a6297b83af411",
+      "reward": {
+        "mode": "potential_based",
+        "alpha": 100.0,
+        "distance_weight": 1.0,
+        "speed_weight": 1.0,
+        "angle_weight": 1.0
+      },
+      "gamma": 0.999,
+      "length": 318,
+      "terminated": true,
+      "truncated": false,
+      "outcome": "success",
+      "original_return": 258.23742310326156,
+      "custom_component": "potential_shaping",
+      "custom_total": 215.13103022489548,
+      "training_reward_total": 473.3684533281568
+    },
+    {
+      "experiment_id": "potential_shaping",
+      "training_seed": 142,
+      "run_dir": "20261103T222742Z_seed142",
+      "evaluation_session": "20261105T094237Z",
+      "episode": 0,
+      "env_seed": 10000,
+      "trajectories_sha256": "83adf4b6336d43b6968812e3668d3cf2aa5643b5197ce0eb3ae55a4c51160a61",
+      "reward": {
+        "mode": "potential_based",
+        "alpha": 100.0,
+        "distance_weight": 1.0,
+        "speed_weight": 1.0,
+        "angle_weight": 1.0
+      },
+      "gamma": 0.999,
+      "length": 356,
+      "terminated": true,
+      "truncated": false,
+      "outcome": "success",
+      "original_return": 249.6323933045832,
+      "custom_component": "potential_shaping",
+      "custom_total": 216.26866657996115,
+      "training_reward_total": 465.9010598845441
+    },
+    {
+      "experiment_id": "potential_shaping",
+      "training_seed": 242,
+      "run_dir": "20261104T183327Z_seed242",
+      "evaluation_session": "20261105T094252Z",
+      "episode": 0,
+      "env_seed": 10000,
+      "trajectories_sha256": "8fd46355546111077787e49fae9775b8665eb17e91596bfc1a7f57333b8868ff",
+      "reward": {
+        "mode": "potential_based",
+        "alpha": 100.0,
+        "distance_weight": 1.0,
+        "speed_weight": 1.0,
+        "angle_weight": 1.0
+      },
+      "gamma": 0.999,
+      "length": 393,
+      "terminated": true,
+      "truncated": false,
+      "outcome": "success",
+      "original_return": 232.8102722237197,
+      "custom_component": "potential_shaping",
+      "custom_total": 215.3278929882215,
+      "training_reward_total": 448.1381652119409
+    }
+  ],
+  "python": "3.12.5",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "gymnasium": "1.4.0",
+    "Box2D": "2.3.10",
+    "stable-baselines3": "2.9.2",
+    "torch": "2.15.0",
+    "numpy": "2.5.4",
+    "tensorboard": "2.21.0",
+    "moviepy": "2.2.1",
+    "pillow": "11.3.0",
+    "PyYAML": "6.0.3"
+  },
+  "source": {
+    "commit": "53079be960974b64b2246886e07819ecfd3ec3b7",
+    "dirty": false,
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked": []
+  },
+  "argv": [
+    "scripts/extract_traces.py",
+    "--config",
+    "configs/visualization.yaml",
+    "--output",
+    "results/phase06/component_traces.csv"
+  ]
+}

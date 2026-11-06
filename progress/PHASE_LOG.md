@@ -186,3 +186,28 @@ For each phase, append:
   (3/3)" (results, report, progress). All are local commits on `main`, not
   pushed.
 - **Handoff:** `progress/handoffs/2026-11-05-phase-05.md`
+
+---
+
+## 2026-11-07 — 06-visualization
+
+- **Plan approval:** the user approved the plan ("approve, go with 1, 3 and
+  4"): commit one clip per run, commit the trace CSV, outputs under
+  `results/phase06/` plus an experiment record. On decision 2 the user will
+  watch the clips later, not in this phase.
+- **Files changed:** see `progress/handoffs/2026-11-07-phase-06.md`.
+- **Checks:**
+  - pytest 337 passed; ruff and `mypy --strict` clean.
+  - Figures and traces regenerated from saved data are byte-identical.
+  - Every trace matches `episode_metrics.csv` exactly.
+  - All 12 clips match their committed records.
+- **Specialist review:**
+  - Documentation Reviewer ACCEPT after m1 and m2; those and most
+    recommendations were fixed.
+  - Experiment Analyst REVISE: M1–M3 and m1–m5 fixed.
+- **Acceptance decision:** Accepted. The acceptance criteria are evidenced,
+  and the user approved the checkpoint commit ("commit").
+- **Git checkpoint:** `53079be` (1/2), `892252a` (2/3), then "Phase 06
+  (3/3)" (results, record, docs, progress). All are local commits on
+  `main`, not pushed.
+- **Handoff:** `progress/handoffs/2026-11-07-phase-06.md`
