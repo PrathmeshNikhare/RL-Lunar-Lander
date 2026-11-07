@@ -1,25 +1,21 @@
 # Project Status
 
 - Project: Lunar Lander Reward Engineering with PPO
-- Overall status: Phases 00–06 complete; Phase 07 not started
-- Current phase: 07-publication (next)
-- Current phase status: Not started; plan requires user approval
+- Overall status: All phases (00–07) complete
+- Current phase: None (07-publication accepted)
+- Current phase status: Complete; committed locally, push pending separate
+  approval
 - Commits:
-  - `origin/main` is at `e594275` (Phase 05 3/3).
-  - Local, not pushed: `53079be` "Phase 06 (1/2)" (pipeline), `892252a`
-    "Phase 06 (2/3)" (figure review fixes) and "Phase 06 (3/3)" (results,
-    record, docs, progress).
-- Phase 06 outputs (`results/phase06/`, record
-  `experiments/records/2026-11-07-visual-analysis.md`):
-  - 8 figures built from committed data only; a re-run is byte-identical;
-  - per-step traces of evaluation episode 0 for all 12 runs;
-  - 12 clips, labelled from data, not yet watched (the owner will watch
-    them later);
-  - new finding: in 4 of its 7 timeouts, upright seed 42 rests on the pad
-    collecting the bonus without the +100 at-rest termination.
+  - `origin/main` is at `31d02ca` (Phase 06 3/3; pushed by the user).
+  - The Phase 07 commit is local on `main`, not pushed.
+- Phase 07 verification:
+  - clean install from a fresh clone and venv passed (337 tests, static
+    checks, byte-identical figures);
+  - Git audit clean (no secrets or local paths in the tree or history);
+  - 53 README and doc links resolve.
 - Active blockers: None
-- Next action: `/start-phase 07-publication` (plan only)
-- User approval required before implementation: Yes
+- Next action: push to `origin` only with separate approval
+- User approval required: Yes (push)
 
 ## Phase tracker
 
@@ -32,8 +28,8 @@
 | 04 | Four reward experiments | Complete |
 | 05 | Controlled evaluation | Complete |
 | 06 | Visualization and analysis | Complete |
-| 07 | GitHub publication | Not started |
+| 07 | GitHub publication | Complete |
 
-Latest handoff: `progress/handoffs/2026-11-07-phase-06.md`
+Latest handoff: `progress/handoffs/2026-11-07-phase-07.md`
 
 Update this file only with verified repository evidence.

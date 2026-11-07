@@ -1,5 +1,10 @@
 # Reward Design Specification
 
+This is the original design specification, written before implementation.
+The implemented formulas, units and terminal handling are in
+`docs/reward-wrapper.md`. The chosen magnitudes are in
+`docs/reward-experiments.md` (D-032).
+
 ## A. Baseline
 
 Use the exact reward returned by LunarLander-v3. Do not reimplement it.

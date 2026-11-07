@@ -211,3 +211,30 @@ For each phase, append:
   (3/3)" (results, record, docs, progress). All are local commits on
   `main`, not pushed.
 - **Handoff:** `progress/handoffs/2026-11-07-phase-06.md`
+
+---
+
+## 2026-11-07 — 07-publication
+
+- **Plan approval:** the user approved the plan ("approve, go with 1, 2 keep
+  it no license, 3 and 4"): keep the harness files public, no license, a
+  clean-install walkthrough, and clips as MP4 links. Pushing is a separate
+  approval.
+- **Files changed:** see `progress/handoffs/2026-11-07-phase-07.md`. Docs
+  and README only; no code or test changes.
+- **Checks:**
+  - Git audit clean.
+  - Clean install from a fresh clone and venv: 337 passed, static checks
+    clean, figures byte-identical. A first attempt failed on the Windows
+    path-length limit; this is now documented.
+  - 53 links resolve. pytest 337 passed; ruff and `mypy --strict` clean.
+- **Specialist review:**
+  - Documentation Reviewer REVISE: M1, M2 and m1–m5 fixed.
+  - Architecture Reviewer REVISE: M1–M5 fixed; L1, L3 and L6 deferred.
+  - Test Engineer ACCEPT: low items done.
+- **Acceptance decision:** Accepted. The acceptance criteria are evidenced,
+  and the user approved the checkpoint commit ("commit").
+- **Git checkpoint:** "Phase 07: publication README, docs and release
+  checks", a local commit on `main`. Pushing to `origin` needs separate
+  approval.
+- **Handoff:** `progress/handoffs/2026-11-07-phase-07.md`

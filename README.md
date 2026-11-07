@@ -1,75 +1,304 @@
-# Lunar Lander Reward Engineering — Claude Code Harness
+# Reward Engineering on Lunar Lander with PPO
 
-This repository scaffold is an execution harness, not the finished application.
-It is designed for a local Windows 11 + PowerShell workflow and Claude Code.
+How does the reward an agent is trained on change what it learns? This
+project trains PPO agents on Gymnasium's `LunarLander-v3` under four reward
+designs. It then evaluates every policy on the **original** environment
+reward, so that the designs are compared on the actual task rather than on
+their own scores.
 
-## Project objective
+| Configuration | Training reward = original reward + |
+|---|---|
+| `baseline` | nothing |
+| `time_penalty` | −0.05 per step |
+| `upright_slow_bonus` | +1 per step while \|angle\| ≤ 0.2 rad and speed ≤ 0.2. This bonus is flawed on purpose: it ignores position and landing |
+| `potential_shaping` | 100·(0.999·Φ(s′) − Φ(s)), with Φ(s) = −(distance to pad + speed + \|angle\|) and Φ(s′) = 0 on termination |
 
-Train a PPO agent on Gymnasium `LunarLander-v3`, then study how reward design
-changes learned behaviour. Compare:
-1. Original environment reward (baseline)
-2. Small per-timestep penalty
-3. Deliberately flawed upright-and-slow bonus (reward-hacking attempt)
-4. Potential-based reward shaping
+**Main result.**
+- The flawed upright-and-slow bonus was exploited. Its training reward rose
+  to 950–979 per episode while its success on the task fell to 92/300
+  episodes. Two of its three seeds mostly stay in the air until the time
+  limit.
+- The other three designs all solve the task (291–296/300 successes).
+  Three seeds are not enough to tell them apart.
 
-All final policy evaluations must use the original environment reward with
-custom reward modifications disabled.
+Stack: Python 3.12, Gymnasium 1.4 (Box2D), Stable-Baselines3 2.9 PPO
+(`MlpPolicy`, [64, 64]), PyTorch (CPU), Matplotlib. Windows 11 /
+PowerShell. No GPU is needed.
 
-## Start here
+## Results
 
-1. Extract this archive into a new, empty project directory.
-2. Open that directory in a terminal and initialize Git:
-   `git init`
-3. Open Claude Code in the project root.
-4. Ask Claude Code to read `CLAUDE.md`, `AGENTS.md`, and `progress/STATUS.md`.
-5. Run `/status`.
-6. Run `/start-phase 00-foundation`.
+Setup:
+- 4 configurations × 3 training seeds (42, 142, 242), with 1M timesteps per
+  run.
+- Each run is evaluated on 100 deterministic episodes (env seeds
+  10000–10099), the same for every run, on the original reward with no
+  wrapper.
+- The training seed is the unit of replication. With n = 3 per
+  configuration, no significance tests are reported.
 
-Do not ask Claude Code to implement all phases at once.
+| Configuration | Mean return (± sample std over 3 seeds) | Success, pooled | Success by seed (42 / 142 / 242) | Timeouts, pooled | Mean length (steps) |
+|---|---|---|---|---|---|
+| baseline | 243.9 ± 9.5 | 291/300 | 91 / 100 / 100 | 3 | 395 |
+| time_penalty | 259.2 ± 12.5 | 296/300 | 96 / 100 / 100 | 4 | 323 |
+| upright_slow_bonus | 3.0 ± 149.7 | 92/300 | 91 / 1 / 0 | 206 | 925 |
+| potential_shaping | 245.8 ± 8.6 | 295/300 | 97 / 100 / 98 | 2 | 392 |
 
-## Execution contract
+"Success" means the lander came to rest (+100) with |x| ≤ 0.2, on the pad.
+The outcome rules are in [`docs/07-metrics.md`](docs/07-metrics.md). The
+table is generated from
+[`results/phase05/`](results/phase05/), and every figure below comes from
+committed data ([`docs/visualization.md`](docs/visualization.md)).
 
-For every phase, Claude Code must:
-- inspect the current repository and relevant harness documents;
-- prepare a concise plan and identify files it intends to change;
-- wait for user approval before implementation;
-- implement only the approved phase;
-- run relevant tests and checks;
-- request independent review where specified;
-- update progress files and create a handoff;
-- summarize evidence and ask for approval before advancing.
+![Evaluation outcomes per run](results/phase06/figures/04_evaluation_outcomes.png)
 
-The repository is the source of truth. Chat history is not a substitute for
-`progress/` files.
+![Evaluation returns per episode](results/phase06/figures/03_evaluation_returns.png)
 
-## Scope guardrails
+### Reward hacking: the upright-and-slow bonus
 
-- Python 3.12 is the target local environment.
-- Use Gymnasium, Box2D, Stable-Baselines3, PyTorch, TensorBoard and Matplotlib.
-- Use PPO with `MlpPolicy`; initial architecture is two hidden layers of 64 units.
-- Do not implement PPO from scratch.
-- Do not add a web UI, database, DQN/SAC comparison, or unrelated features.
-- Do not claim a reward-hacking behaviour occurred unless videos and metrics
-  support that conclusion.
-- Keep training and evaluation separate.
-- Preserve the baseline and make experiment configurations explicit.
-- Never overwrite a useful checkpoint or experiment result without approval.
+The bonus pays for being upright and slow anywhere, so it can be collected
+without landing. Training reward and task reward come apart:
 
-## Suggested local workflow
+| Configuration | Late-training shaped total | Late-training original reward | Evaluation original reward |
+|---|---|---|---|
+| baseline | 220 to 253 | 220 to 253 | 238 to 255 |
+| time_penalty | 101 to 220 | 150 to 242 | 246 to 270 |
+| upright_slow_bonus | **950 to 979** | 43 to 127 | **−125 to 168** |
+| potential_shaping | 359 to 447 | 139 to 227 | 236 to 252 |
 
-Use PowerShell. Local environment setup and verification steps are in
-[`docs/setup-windows.md`](docs/setup-windows.md).
-Training can be computationally variable; the initial one-million-timestep
-budget is a starting point, not a promise of a fixed runtime or solved agent.
+The ranges are over the 3 seeds:
+- **Late training** means the training episodes ending at or after 900k
+  steps, a window chosen after training. Those episodes come from the
+  stochastic training policy.
+- The shaped totals use each configuration's own reward, so they are not
+  comparable across rows.
 
-## Harness map
+![Custom training-reward terms](results/phase06/figures/02_training_custom_terms.png)
 
-- `CLAUDE.md`, `AGENTS.md`: global operating rules
-- `.claude/agents/`: specialist review and implementation roles
-- `.claude/commands/`: phase and handoff workflows
-- `docs/`: requirements, architecture, reward design, evaluation and release
-- `phases/`: phase-specific plans, tasks, tests and exit gates
-- `progress/`: durable project state
-- `templates/`: reusable experiment, review and handoff templates
-- `configs/`: initial configuration contract
-# RL-Lunar-Lander
+What the bonus policies do in evaluation:
+- **Seed 242** stays airborne near spawn height until the time limit (100/100
+  timeouts, median final height 1.35).
+- **Seed 142** sinks very slowly and almost never lands (99/100 timeouts; 4
+  episodes with leg contact; median final height 0.40).
+- **Seed 42** mostly lands, late (91/100 successes).
+  - 4 of its 7 timeouts end on the pad after touching down, without the
+    +100 at-rest termination.
+  - In the one traced episode (evaluation episode 0), the bonus is paid on
+    every step after touchdown. Side-engine bursts, at most 5 idle steps
+    apart, keep the Box2D body awake, so it cannot come to rest.
+  - That explanation comes from the environment source, not an
+    intervention test, and it was traced for this episode only. See the
+    [analysis](experiments/records/2026-11-07-visual-analysis.md).
+
+The figure below follows one fixed evaluation episode per run step by step.
+It shows the cumulative task reward, the custom term the training reward
+would have added, and the height:
+
+![One episode per run, step by step](results/phase06/figures/08_episode_traces.png)
+
+Example clips (video episode 0, env seed 20000):
+- [baseline, seed 42](results/phase06/videos/baseline_seed42_video-episode0.mp4):
+  success, 370 steps.
+- [upright_slow_bonus, seed 242](results/phase06/videos/upright_slow_bonus_seed242_video-episode0.mp4):
+  timeout, 1000 steps.
+- [upright_slow_bonus, seed 42](results/phase06/videos/upright_slow_bonus_seed42_video-episode0.mp4):
+  success, 906 steps.
+
+All 12 clips and their labels are listed in
+[`results/phase06/videos/videos.csv`](results/phase06/videos/videos.csv). The
+labels come from the recorded data. The project owner reviewed the
+upright_slow_bonus clips; the other clips have not been reviewed.
+
+### Other observations
+- **Potential shaping** neither helped nor hurt in a way that 3 seeds can
+  detect.
+  - Its per-episode shaping total (100-episode trailing mean) stays between
+    204 and 229 throughout training.
+  - That is expected: the sum telescopes to roughly −α·Φ(start state).
+- **Time penalty** gave the shortest episodes (mean 323 steps against 395)
+  and the highest mean return. The seed ranges overlap with the baseline's.
+- **Deterministic evaluation** scored above the late-training mean of the
+  stochastic training policy in 10 of 12 runs.
+
+## Quick start (Windows 11, PowerShell)
+
+Full instructions and troubleshooting:
+[`docs/setup-windows.md`](docs/setup-windows.md). Clone into a short path:
+a project path longer than about 100 characters makes the PyTorch install
+fail unless Windows long paths are enabled.
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
+.\.venv\Scripts\python.exe scripts\check_environment.py
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Rebuild the figures from the committed results (no training needed). The
+output folder must not exist yet:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\make_figures.py --config configs\visualization.yaml --output $env:TEMP\figures
+```
+
+## Reproducing the experiments
+
+| Step | Command | Details |
+|---|---|---|
+| Explore the environment | `scripts\random_rollout.py` | [`docs/environment-notes.md`](docs/environment-notes.md) |
+| Train one run (about 4–11 min on CPU; 10 of the 12 runs took 4–5 min) | `scripts\train.py --config configs\<experiment>.yaml --seed <N>` | [`docs/training-and-evaluation.md`](docs/training-and-evaluation.md) |
+| Evaluate on the original reward | `scripts\evaluate.py --run-dir runs\<experiment>\<run>` | same |
+| Record clips | `scripts\record_video.py --run-dir runs\<experiment>\<run>` | same |
+| All 12 runs (4 configurations × 3 seeds) | loop in the doc | [`docs/reward-experiments.md`](docs/reward-experiments.md) |
+| Compare runs | `scripts\compare_runs.py --config configs\evaluation_metrics.yaml --output <new folder>` | [`docs/07-metrics.md`](docs/07-metrics.md) |
+| Traces, clips, figures | `scripts\extract_traces.py`, `collect_videos.py`, `make_figures.py` | [`docs/visualization.md`](docs/visualization.md) |
+
+Run every command from the repository root with `.\.venv\Scripts\python.exe`.
+Every script refuses to overwrite an existing output. Each run records its
+configuration, seeds, package versions and git revision.
+
+Training outputs (`runs/`: models, TensorBoard logs, per-step trajectories)
+are git-ignored. Small copies of the results are committed under
+[`results/`](results/), and the write-ups are in
+[`experiments/records/`](experiments/records/).
+
+### Analysing your own runs
+
+The comparison, trace, clip and figure steps are set up for the committed
+runs:
+- `configs/evaluation_metrics.yaml` selects runs trained from commit
+  `74f4f36` (the owner's runs). Runs trained at any other commit are listed
+  as `missing_runs`.
+- `extract_traces.py` and `collect_videos.py` take run and session names
+  from `results/phase05/comparison.json`.
+- `make_figures.py` reads per-run copies in
+  `results/phase04/<experiment>/seed<N>/`.
+
+To analyse new runs, after training, evaluating and recording them:
+1. Copy `configs/evaluation_metrics.yaml`, and set
+   `run_selection.source_commit` (and the seeds) to match your runs. Run
+   `compare_runs.py --config <copy> --output <new folder>`.
+2. Make a folder laid out as `<experiment>/seed<N>/`. For each run, put in
+   it the run's `config.json` (renamed `run_config.json`), its
+   `reward_components.csv`, and its video session's `episodes.csv`
+   (renamed `video_episodes.csv`).
+3. Copy `configs/visualization.yaml`, and point `inputs.phase04_results`
+   and `inputs.phase05_results` at those two folders and
+   `inputs.component_traces` at a new path. Then run `extract_traces.py`,
+   `collect_videos.py` and `make_figures.py` with new `--output` paths.
+
+The figures support up to 4 configurations, one of them trained on the
+original reward, with up to 3 seeds each.
+
+Training was not repeated in this project, so it is untested whether new
+runs reproduce the committed numbers exactly, especially on another machine
+or software version. The committed figures do rebuild byte-identically from
+the committed data.
+
+## How it works
+
+```mermaid
+flowchart LR
+    cfg["configs/*.yaml"] --> train["train.py<br/>PPO, MlpPolicy 64x64"]
+    env["LunarLander-v3"] --> wrap["RewardComponentsWrapper<br/>training only"] --> train
+    train --> run["runs/ (local)"]
+    run --> eval["evaluate.py<br/>original reward, no wrapper"]
+    run --> vid["record_video.py<br/>original reward, no wrapper"]
+    run -.->|committed copies| p04["results/phase04"]
+    eval --> cmp["compare_runs.py"] --> p05["results/phase05"]
+    eval --> tr["extract_traces.py"] --> traces["component traces"]
+    vid --> clips["collect_videos.py"] --> p06v["results/phase06/videos"]
+    p04 --> fig["make_figures.py"]
+    p05 --> fig
+    traces --> fig
+    fig --> p06f["results/phase06/figures"]
+```
+
+The full data-flow diagram, with every input of each step, is in
+[`docs/03-architecture.md`](docs/03-architecture.md).
+
+- **Reward terms:** pure functions in `reward_functions.py`, applied by a
+  Gymnasium wrapper that never touches simulator internals. The formulas,
+  units and terminal handling are in
+  [`docs/reward-wrapper.md`](docs/reward-wrapper.md).
+- **Potential shaping:** uses PPO's own γ. On truncation, Φ(s′) is kept,
+  matching SB3's time-limit bootstrapping. The policy-invariance assumptions
+  are stated in the same doc.
+- **Evaluation and video recording** build the environment without the
+  wrapper.
+- Module responsibilities: [`docs/03-architecture.md`](docs/03-architecture.md).
+
+## Testing
+
+- 337 tests (`pytest -q`, about 45 s). They cover reward maths against hand
+  calculations, wrapper contracts, terminal handling and config validation.
+- They also cover outcome rules on real environment episodes, write-once
+  outputs, CLI error paths, and a bit-for-bit check that replayed reward
+  terms match the training wrapper.
+- PPO is exercised only in short smoke runs (at most 2,048 timesteps);
+  tests never start a full training job.
+- There is no CI workflow. The suite was run locally and in a fresh clone
+  ([`docs/release-summary.md`](docs/release-summary.md)).
+- Static checks: `ruff check .`, `ruff format --check .` and
+  `mypy --strict lunar_lander_rl scripts tests`.
+
+## Limitations and future work
+
+**Limitations**
+- Three training seeds per configuration and one magnitude per reward term.
+  The seeds of the upright bonus differ sharply (0–91% success), so its
+  averages describe these three seeds only.
+- One PPO hyperparameter set (RL Zoo defaults for this environment) and a
+  1M-step budget. Several training curves were still rising at the end.
+- Behaviour analysis is post hoc in places, as labelled: the hover-length
+  split, the grounded-timeout filter, the late-training window. The
+  pre-registered hover rule also flags ordinary slow descents.
+- The per-step evaluation trajectories (about 19 MB) are not committed.
+  The figures rebuild from Git, but the traces need the local `runs/`.
+- Only the upright-bonus clips have been reviewed by a person.
+- One machine and one software stack.
+
+**Future work**
+- More seeds, and a sweep over reward magnitudes (penalty size, bonus
+  thresholds, shaping α).
+- Fix the flawed bonus (for example, require leg contact or proximity to
+  the pad) and test whether the exploit disappears.
+- An intervention test of the rest-without-terminating behaviour, such as
+  suppressing side-engine actions once on the ground.
+- Confidence intervals across seeds (bootstrap) once n is large enough.
+
+## Repository map
+
+| Path | Contents |
+|---|---|
+| `lunar_lander_rl/` | Package: environment, reward terms and wrapper, training, evaluation, metrics, figures |
+| `scripts/` | Command-line entry points |
+| `configs/` | Experiment, metrics and figure configs (YAML, validated at startup) |
+| `tests/` | pytest suite |
+| `results/` | Committed result copies (`baseline`: the single Phase 02 baseline run; `phase04`: per run; `phase05`: comparison; `phase06`: figures, traces, clips) |
+| `experiments/records/` | Experiment write-ups for Phase 02 (baseline), Phase 04 (one per configuration), Phase 05 and Phase 06 |
+| `docs/` | Setup, environment notes, reward wrapper, experiments, metrics, figures, architecture, release summary. Files `01`, `02`, `04`–`06`, `08` and `09` are the original specification, labelled as such |
+| `CLAUDE.md`, `AGENTS.md`, `.claude/`, `phases/`, `progress/`, `templates/` | The development harness (below) |
+
+## How this project was built
+
+The project was developed with Claude Code under a phase-gated workflow,
+which is kept in the repository on purpose:
+- **Phases:** each phase (`phases/00`–`07`) started with a written plan
+  that needed explicit approval.
+- **Reviews:** specialist role reviews (`.claude/agents/`) were run, and
+  their findings fixed or recorded.
+- **Gates:** each phase closed only with tests run, progress files updated
+  and a handoff written.
+- **Decision log:** every decision, with alternatives and who approved it,
+  is in [`progress/DECISIONS.md`](progress/DECISIONS.md).
+- **Phase handoffs:** in [`progress/handoffs/`](progress/handoffs/).
+
+The project owner approved each phase plan and each phase's checkpoint
+commit. The release summary is in
+[`docs/release-summary.md`](docs/release-summary.md).
+
+## License
+
+No license is granted: all rights are reserved by the author. You may read
+the code on GitHub, but reuse needs the author's permission.

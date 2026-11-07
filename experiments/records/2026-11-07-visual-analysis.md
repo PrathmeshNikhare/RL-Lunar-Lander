@@ -303,8 +303,9 @@ committed `video_episodes.csv` and the D-036 outcome rule (`videos.csv`).
   seeds stay airborne for almost every episode. Seed 242 stays near spawn
   height (median final y 1.345) and seed 142 sinks very slowly (median final
   y 0.404) (`final_y` in `episode_metrics.csv`). The third seed mostly lands,
-  but in 4 of its 7 timeouts it sits on the pad, collecting the bonus,
-  without coming to rest.
+  but 4 of its 7 timeouts end on the pad after touchdown without coming to
+  rest. Bonus collection on the ground was traced in one of them
+  (evaluation episode 0) only.
 - **Training reward is not task performance:** the highest late-training
   shaped totals (upright, 950–979) go with the lowest evaluation returns.
 

@@ -74,7 +74,8 @@ passes. Expected results:
 - `check_environment.py` prints one `[OK]` line per check and ends with
   `All checks passed.`; `$LASTEXITCODE` is then `0`. Any `[FAIL]` line names
   the failing import or call.
-- `pytest` reports `10 passed`. The upstream Box2D SWIG binding emits
+- `pytest` reports every test passed: `10 passed` at Phase 00, and 337 at
+  Phase 07. The upstream Box2D SWIG binding emits
   `DeprecationWarning`s on import; `pytest.ini` ignores exactly those two
   message patterns. Do not run the suite with a blanket
   `-W error::DeprecationWarning`: Box2D then crashes the interpreter on import
@@ -107,3 +108,13 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 - **`pip` tries to build Box2D from source:** the interpreter is probably not
   64-bit CPython 3.12. Check `.\.venv\Scripts\python.exe -c "import struct; print(struct.calcsize('P') * 8)"`
   (expect `64`).
+- **`pip install` fails with `OSError: [Errno 2] No such file or directory`
+  under `torch-...dist-info\licenses\...`:** the project path is too long.
+  - The PyTorch 2.15 wheel installs a file about 150 characters deep inside
+    `.venv`. Windows limits paths to 260 characters unless long-path support
+    is enabled.
+  - Clone the project into a short path (the project root should be under
+    about 100 characters, for example `D:\Projects\lunar-lander`), or enable
+    Windows long paths (<https://pip.pypa.io/warnings/enable-long-paths>).
+  - Then delete `.venv` and install again.
+  - Found in Phase 07: a clone at a 111-character path failed this way.

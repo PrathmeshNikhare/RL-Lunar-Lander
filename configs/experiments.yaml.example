@@ -1,5 +1,7 @@
-# Illustrative configuration contract. Values must be validated and finalized
-# during implementation; this file is not executable application code yet.
+# Original configuration sketch from the project scaffold, kept for reference
+# (decision D-022). It is not loaded by any code. The validated experiment
+# configs actually used are configs/baseline.yaml, time_penalty.yaml,
+# upright_slow_bonus.yaml and potential_shaping.yaml (see lunar_lander_rl/config.py).
 
 environment:
   id: LunarLander-v3

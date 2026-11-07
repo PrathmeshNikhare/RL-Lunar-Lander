@@ -1,22 +1,22 @@
 # Current Handoff
 
 ## State
-- **Phases 00–05** are complete. `origin/main` is at `e594275` (Phase 05
-  3/3).
-- **Phase 06** (visualization and analysis) is complete: `53079be` (1/2),
-  `892252a` (2/3) and "Phase 06 (3/3)" (results, record, docs, progress),
-  all local, not pushed. The user accepted it ("commit").
-  - Experiment Analyst REVISE and Documentation Reviewer ACCEPT (after
-    fixes); all required fixes are applied.
+- **Phases 00–06** are complete. `origin/main` is at `31d02ca` (Phase 06
+  3/3, pushed by the user).
+- **Phase 07** (GitHub publication) is complete and accepted by the user.
+  It is committed locally on `main` and not pushed.
+  - Reviews: Documentation REVISE and Architecture REVISE (all required
+    fixes applied); Test Engineer ACCEPT.
 
-Full record: `progress/handoffs/2026-11-07-phase-06.md`.
+Full record: `progress/handoffs/2026-11-07-phase-07.md`.
 
 ## Current phase
-`07-publication`: not started. Phases 00–06 are complete.
+None. All planned phases (00–07) are complete.
 
 ## Next safe action
-1. Run `/start-phase 07-publication` and present the plan only.
-2. Wait for explicit user approval before editing.
+1. Push to `origin` only after separate, explicit approval.
+2. Optional follow-ups (only if the user asks): view the Mermaid diagrams
+   on GitHub, watch the 9 non-bonus clips, Architecture L1/L3/L6.
 
 ## Environment notes
 - Always use `.\.venv\Scripts\python.exe`. The machine's default `py`/`python`
