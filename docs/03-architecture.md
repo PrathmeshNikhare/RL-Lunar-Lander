@@ -66,14 +66,15 @@ mixed with evaluation returns.
 | `traces.py` | Replay recorded episodes through the unchanged wrapper to obtain per-step reward terms (D-041) |
 | `video_selection.py` | Copy one clip per run and label it from the recorded data (D-042) |
 | `figures.py` | Load and cross-check committed results, build every figure, write the manifest (D-043) |
+| `ppo_diagnostics.py` | Copy SB3 `train/*` and `rollout/*` scalars of the compared runs from local TensorBoard logs into `results/phase07/ppo_diagnostics.csv` |
 | `plotting.py` | Pure figure builders, with no file I/O and no pyplot global state |
 | `artifacts.py` | Write-once files, run directories, hashes and provenance (git revision, package versions) |
 | `cli.py` | Shared argparse helpers |
 
 Scripts in `scripts/` are thin command-line wrappers. Each parses
 arguments and calls one module function.
-- `compare_runs.py`, `extract_traces.py`, `collect_videos.py` and
-  `make_figures.py` print a one-line error and exit with code 2 on a
+- `compare_runs.py`, `extract_traces.py`, `collect_videos.py`,
+  `make_figures.py` and `extract_ppo_diagnostics.py` print a one-line error and exit with code 2 on a
   configuration or data error. `train.py` does the same for a configuration
   error.
 - `evaluate.py` and `record_video.py` let errors propagate, which prints a
