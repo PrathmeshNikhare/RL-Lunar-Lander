@@ -18,6 +18,10 @@ None. All planned phases (00–07) are complete.
 - **Repository polish** (D-049): on branch
   `chore/github-repository-polish`, not pushed. Record:
   `progress/handoffs/2026-11-07-github-polish.md`.
+- **Harness removal** (D-050): `CLAUDE.md`, `AGENTS.md`, `.claude/` and
+  `phases/` were removed in a second commit on the same branch, not
+  pushed. Their project rules are now in `docs/03-architecture.md`.
+  Record: `progress/handoffs/2026-11-07-harness-removal.md`.
 
 ## Next safe action
 1. Push `chore/github-repository-polish` and open a PR only after

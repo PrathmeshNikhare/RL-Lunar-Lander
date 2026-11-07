@@ -413,7 +413,7 @@ The full data-flow diagram, with every input of each step, is in
 | Release summary and checklist (Phase 07) | [`docs/release-summary.md`](docs/release-summary.md), [`docs/10-release-checklist.md`](docs/10-release-checklist.md) |
 | Experiment write-ups | [`experiments/records/`](experiments/records/) |
 | Original specification, written before implementation | [`docs/01-project-brief.md`](docs/01-project-brief.md), [`02`](docs/02-requirements.md), [`04`](docs/04-rl-concepts.md), [`05`](docs/05-reward-design.md), [`06`](docs/06-experiment-protocol.md), [`08`](docs/08-testing.md), [`09`](docs/09-git-and-artifacts.md) |
-| Development process: phase plans, decision log, phase log | [`phases/`](phases/), [`progress/DECISIONS.md`](progress/DECISIONS.md), [`progress/PHASE_LOG.md`](progress/PHASE_LOG.md) |
+| Development records: decision log, phase log, handoffs | [`progress/DECISIONS.md`](progress/DECISIONS.md), [`progress/PHASE_LOG.md`](progress/PHASE_LOG.md), [`progress/handoffs/`](progress/handoffs/) |
 
 ## Repository map
 
@@ -426,4 +426,4 @@ The full data-flow diagram, with every input of each step, is in
 | `results/` | Committed result copies (`baseline`: the single Phase 02 baseline run; `phase04`: per run; `phase05`: comparison; `phase06`: figures, traces, clips; `phase07`: PPO training diagnostics) |
 | `experiments/records/` | Experiment write-ups for Phase 02 (baseline), Phase 04 (one per configuration), Phase 05 and Phase 06 |
 | `docs/` | Setup, environment notes, reward wrapper, experiments, metrics, training diagnostics, figures, architecture, release summary. Files `01`, `02`, `04`–`06`, `08` and `09` are the original specification, labelled as such |
-| `CLAUDE.md`, `AGENTS.md`, `.claude/`, `phases/`, `progress/`, `templates/` | The phase-gated development harness: plans, reviews, decisions and handoffs |
+| `progress/`, `templates/` | Development records (decision log, phase log, handoffs) and their templates |

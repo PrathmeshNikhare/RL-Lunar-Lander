@@ -8,9 +8,10 @@
   - `origin/main` is at `e42672a` ("Post-release (2/2)"). Phase 07 and the
     post-release metrics work (D-047, D-048) are pushed (checked with
     `git fetch` on 2026-11-07).
-  - Repository polish (D-049): on branch `chore/github-repository-polish`,
-    not pushed or merged. See
-    `progress/handoffs/2026-11-07-github-polish.md`.
+  - Repository polish (D-049) and harness removal (D-050): two commits on
+    branch `chore/github-repository-polish`, not pushed or merged. See
+    `progress/handoffs/2026-11-07-github-polish.md` and
+    `progress/handoffs/2026-11-07-harness-removal.md`.
 - Phase 07 verification:
   - clean install from a fresh clone and venv passed (337 tests, static
     checks, byte-identical figures);
@@ -34,6 +35,6 @@
 | 06 | Visualization and analysis | Complete |
 | 07 | GitHub publication | Complete |
 
-Latest handoff: `progress/handoffs/2026-11-07-github-polish.md`
+Latest handoff: `progress/handoffs/2026-11-07-harness-removal.md`
 
 Update this file only with verified repository evidence.

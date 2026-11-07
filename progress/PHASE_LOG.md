@@ -274,3 +274,16 @@ For each phase, append:
 - **Git checkpoint:** a local commit on `chore/github-repository-polish`,
   approved by the user ("go ahead and commit once the review is done").
   Not pushed; a push and PR need separate approval.
+
+---
+
+## 2026-11-07 — harness removal (outside the phase plan)
+
+- **Request:** the user asked to remove `phases/`, `CLAUDE.md` and
+  `AGENTS.md`, and `.claude/` if it served no purpose for the finished
+  project (D-050).
+- **Files changed:** see `progress/handoffs/2026-11-07-harness-removal.md`.
+- **Checks:** pytest 341 passed; ruff, ruff format and `mypy --strict`
+  clean; relative-link check 0 broken.
+- **Git checkpoint:** a second local commit on
+  `chore/github-repository-polish`, as the user requested. Not pushed.
