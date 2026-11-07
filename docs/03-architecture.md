@@ -92,3 +92,12 @@ arguments and calls one module function.
   output path that already exists.
 - Every artifact records its provenance: source commit, dirty flag, diff
   hash, untracked files, package versions and command line.
+- Use Stable-Baselines3 PPO and Gymnasium's Box2D environment as they are;
+  neither is re-implemented.
+- Handle Gymnasium's `terminated` and `truncated` flags separately.
+- Keep tunable values in YAML configs, validated at startup, rather than
+  as magic numbers in code.
+- Training runs on the CPU only (`SUPPORTED_DEVICES` in `config.py`); a
+  GPU is never a dependency.
+- Configs and committed artifacts use relative paths only: no
+  machine-specific absolute paths, secrets or personal data.

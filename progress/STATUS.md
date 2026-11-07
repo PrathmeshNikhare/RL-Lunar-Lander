@@ -3,22 +3,24 @@
 - Project: Lunar Lander Reward Engineering with PPO
 - Overall status: All phases (00–07) complete
 - Current phase: None (07-publication accepted)
-- Current phase status: Complete; committed locally, push pending separate
-  approval
+- Current phase status: Complete and pushed
 - Commits:
-  - `origin/main` is at `31d02ca` (Phase 06 3/3; pushed by the user).
-  - The Phase 07 commit (`68280d8`) is local on `main`, not pushed.
-  - Post-release README metrics work (D-047, D-048): `82eab58` (code)
-    and "Post-release (2/2)" (results and docs), local, not pushed. See
-    `progress/handoffs/2026-11-07-post-release-metrics.md`.
+  - `origin/main` is at `e42672a` ("Post-release (2/2)"). Phase 07 and the
+    post-release metrics work (D-047, D-048) are pushed (checked with
+    `git fetch` on 2026-11-07).
+  - Repository polish (D-049) and harness removal (D-050): two commits on
+    branch `chore/github-repository-polish`, not pushed or merged. See
+    `progress/handoffs/2026-11-07-github-polish.md` and
+    `progress/handoffs/2026-11-07-harness-removal.md`.
 - Phase 07 verification:
   - clean install from a fresh clone and venv passed (337 tests, static
     checks, byte-identical figures);
   - Git audit clean (no secrets or local paths in the tree or history);
   - 53 README and doc links resolve.
 - Active blockers: None
-- Next action: push to `origin` only with separate approval
-- User approval required: Yes (push)
+- Next action: the user reviews the polish branch; push it and open a
+  PR only with separate approval
+- User approval required: Yes (push, PR, merge)
 
 ## Phase tracker
 
@@ -33,6 +35,6 @@
 | 06 | Visualization and analysis | Complete |
 | 07 | GitHub publication | Complete |
 
-Latest handoff: `progress/handoffs/2026-11-07-post-release-metrics.md`
+Latest handoff: `progress/handoffs/2026-11-07-harness-removal.md`
 
 Update this file only with verified repository evidence.

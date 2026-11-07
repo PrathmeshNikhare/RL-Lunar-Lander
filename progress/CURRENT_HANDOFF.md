@@ -1,10 +1,10 @@
 # Current Handoff
 
 ## State
-- **Phases 00–06** are complete. `origin/main` is at `31d02ca` (Phase 06
-  3/3, pushed by the user).
-- **Phase 07** (GitHub publication) is complete and accepted by the user.
-  It is committed locally on `main` and not pushed.
+- **Phases 00–07** are complete. `origin/main` is at `e42672a`
+  ("Post-release (2/2)"); everything through the post-release metrics work
+  is pushed (checked with `git fetch` on 2026-11-07).
+- **Phase 07** (GitHub publication) was accepted by the user.
   - Reviews: Documentation REVISE and Architecture REVISE (all required
     fixes applied); Test Engineer ACCEPT.
 
@@ -13,13 +13,20 @@ Full record: `progress/handoffs/2026-11-07-phase-07.md`.
 ## Current phase
 None. All planned phases (00–07) are complete.
 
-- **Post-release README metrics** (D-047, D-048): implemented, reviewed
-  (two REVISE verdicts, fixes applied) and committed locally (`82eab58`,
-  then "Post-release (2/2)"), not pushed. Record:
+- **Post-release README metrics** (D-047, D-048): pushed. Record:
   `progress/handoffs/2026-11-07-post-release-metrics.md`.
+- **Repository polish** (D-049): on branch
+  `chore/github-repository-polish`, not pushed. Record:
+  `progress/handoffs/2026-11-07-github-polish.md`.
+- **Harness removal** (D-050): `CLAUDE.md`, `AGENTS.md`, `.claude/` and
+  `phases/` were removed in a second commit on the same branch, not
+  pushed. Their project rules are now in `docs/03-architecture.md`.
+  Record: `progress/handoffs/2026-11-07-harness-removal.md`.
 
 ## Next safe action
-1. Push to `origin` only after separate, explicit approval.
+1. Push `chore/github-repository-polish` and open a PR only after
+   separate, explicit approval. The new CI workflow first runs on that
+   PR; add a CI badge only after it passes.
 2. Optional follow-ups (only if the user asks): view the Mermaid diagrams
    on GitHub, watch the 9 non-bonus clips, Architecture L1/L3/L6.
 

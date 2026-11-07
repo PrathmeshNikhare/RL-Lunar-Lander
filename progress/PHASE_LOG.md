@@ -254,4 +254,36 @@ For each phase, append:
   - Documentation Reviewer REVISE.
   - All findings fixed.
 - **Git checkpoint:** the user approved the commit ("commit"): `82eab58` (code),
-  then "Post-release (2/2)" (results, README, docs, progress). Local, not pushed.
+  then "Post-release (2/2)" (results, README, docs, progress). Later pushed
+  by the user: `origin/main` was at `e42672a` on 2026-11-07.
+
+---
+
+## 2026-11-07 — repository polish (outside the phase plan)
+
+- **Request:** the user asked for a GitHub portfolio polish without
+  changing code, configs or results (D-049). The Stage 1 audit was
+  approved with the recommended options.
+- **Files changed:** see `progress/handoffs/2026-11-07-github-polish.md`.
+- **Checks:**
+  - pytest 341 passed; ruff, ruff format and `mypy --strict` clean.
+  - Relative-link and anchor check: 0 broken.
+  - Moved README tables: every numeric token is present in
+    `docs/training-diagnostics.md`.
+- **Specialist review:** Documentation Reviewer REVISE. All findings fixed.
+- **Git checkpoint:** a local commit on `chore/github-repository-polish`,
+  approved by the user ("go ahead and commit once the review is done").
+  Not pushed; a push and PR need separate approval.
+
+---
+
+## 2026-11-07 — harness removal (outside the phase plan)
+
+- **Request:** the user asked to remove `phases/`, `CLAUDE.md` and
+  `AGENTS.md`, and `.claude/` if it served no purpose for the finished
+  project (D-050).
+- **Files changed:** see `progress/handoffs/2026-11-07-harness-removal.md`.
+- **Checks:** pytest 341 passed; ruff, ruff format and `mypy --strict`
+  clean; relative-link check 0 broken.
+- **Git checkpoint:** a second local commit on
+  `chore/github-repository-polish`, as the user requested. Not pushed.
