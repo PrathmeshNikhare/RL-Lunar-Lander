@@ -13,6 +13,11 @@ Full record: `progress/handoffs/2026-11-07-phase-07.md`.
 ## Current phase
 None. All planned phases (00–07) are complete.
 
+- **Post-release README metrics** (D-047, D-048): implemented, reviewed
+  (two REVISE verdicts, fixes applied) and committed locally (`82eab58`,
+  then "Post-release (2/2)"), not pushed. Record:
+  `progress/handoffs/2026-11-07-post-release-metrics.md`.
+
 ## Next safe action
 1. Push to `origin` only after separate, explicit approval.
 2. Optional follow-ups (only if the user asks): view the Mermaid diagrams

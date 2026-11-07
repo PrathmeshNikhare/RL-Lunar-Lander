@@ -1,0 +1,221 @@
+{
+  "comparison_sha256": "bbeb481fa9a5f5cbe71eada9c7ddd97d9b9e9d967a62ba925e33ddeeea37b5ad",
+  "tags": [
+    "rollout/ep_rew_mean",
+    "rollout/ep_len_mean",
+    "train/approx_kl",
+    "train/clip_fraction",
+    "train/entropy_loss",
+    "train/explained_variance",
+    "train/value_loss"
+  ],
+  "n_rows": 5148,
+  "runs": [
+    {
+      "experiment_id": "baseline",
+      "training_seed": 42,
+      "run_dir": "20261103T215416Z_seed42",
+      "event_file_sha256": "5c1bd52730fc8c0a7da88e583aa2d963262d8f2a3aca9b87913b658cf94e93dc",
+      "points_per_tag": {
+        "rollout/ep_rew_mean": 62,
+        "rollout/ep_len_mean": 62,
+        "train/approx_kl": 61,
+        "train/clip_fraction": 61,
+        "train/entropy_loss": 61,
+        "train/explained_variance": 61,
+        "train/value_loss": 61
+      }
+    },
+    {
+      "experiment_id": "baseline",
+      "training_seed": 142,
+      "run_dir": "20261103T221354Z_seed142",
+      "event_file_sha256": "2bef4db6c9243ed1ca5b27d40d6596333dd609b0711265acc4b847994fedd214",
+      "points_per_tag": {
+        "rollout/ep_rew_mean": 62,
+        "rollout/ep_len_mean": 62,
+        "train/approx_kl": 61,
+        "train/clip_fraction": 61,
+        "train/entropy_loss": 61,
+        "train/explained_variance": 61,
+        "train/value_loss": 61
+      }
+    },
+    {
+      "experiment_id": "baseline",
+      "training_seed": 242,
+      "run_dir": "20261103T223219Z_seed242",
+      "event_file_sha256": "155b5bb8b24c93a658ddf8d52dc3b1a69ad804bddae475874d96604d02dede92",
+      "points_per_tag": {
+        "rollout/ep_rew_mean": 62,
+        "rollout/ep_len_mean": 62,
+        "train/approx_kl": 61,
+        "train/clip_fraction": 61,
+        "train/entropy_loss": 61,
+        "train/explained_variance": 61,
+        "train/value_loss": 61
+      }
+    },
+    {
+      "experiment_id": "time_penalty",
+      "training_seed": 42,
+      "run_dir": "20261103T215919Z_seed42",
+      "event_file_sha256": "864cec2ff6328f298eba3d2da02fbfbbc3ecda240a08892e4fa240b4324d6578",
+      "points_per_tag": {
+        "rollout/ep_rew_mean": 62,
+        "rollout/ep_len_mean": 62,
+        "train/approx_kl": 61,
+        "train/clip_fraction": 61,
+        "train/entropy_loss": 61,
+        "train/explained_variance": 61,
+        "train/value_loss": 61
+      }
+    },
+    {
+      "experiment_id": "time_penalty",
+      "training_seed": 142,
+      "run_dir": "20261103T221837Z_seed142",
+      "event_file_sha256": "09615d7b8699e48462509b4ae9a36715426f4b515a96228fc11872e6a9256d74",
+      "points_per_tag": {
+        "rollout/ep_rew_mean": 62,
+        "rollout/ep_len_mean": 62,
+        "train/approx_kl": 61,
+        "train/clip_fraction": 61,
+        "train/entropy_loss": 61,
+        "train/explained_variance": 61,
+        "train/value_loss": 61
+      }
+    },
+    {
+      "experiment_id": "time_penalty",
+      "training_seed": 242,
+      "run_dir": "20261104T181910Z_seed242",
+      "event_file_sha256": "51e5b77f8fbf7f448a1cfa2cc84637f935663dead5b30ac0b8157dced91e2344",
+      "points_per_tag": {
+        "rollout/ep_rew_mean": 62,
+        "rollout/ep_len_mean": 62,
+        "train/approx_kl": 61,
+        "train/clip_fraction": 61,
+        "train/entropy_loss": 61,
+        "train/explained_variance": 61,
+        "train/value_loss": 61
+      }
+    },
+    {
+      "experiment_id": "upright_slow_bonus",
+      "training_seed": 42,
+      "run_dir": "20261103T220405Z_seed42",
+      "event_file_sha256": "42f188793703a0c48f02aad31515fbf4dc51274ce34119aa9ab2381211c737d4",
+      "points_per_tag": {
+        "rollout/ep_rew_mean": 62,
+        "rollout/ep_len_mean": 62,
+        "train/approx_kl": 61,
+        "train/clip_fraction": 61,
+        "train/entropy_loss": 61,
+        "train/explained_variance": 61,
+        "train/value_loss": 61
+      }
+    },
+    {
+      "experiment_id": "upright_slow_bonus",
+      "training_seed": 142,
+      "run_dir": "20261103T222308Z_seed142",
+      "event_file_sha256": "f5f387bc12a8013c534cd2b5d467449f6bca669eaac8ce447b6cb5000cda1a5c",
+      "points_per_tag": {
+        "rollout/ep_rew_mean": 62,
+        "rollout/ep_len_mean": 62,
+        "train/approx_kl": 61,
+        "train/clip_fraction": 61,
+        "train/entropy_loss": 61,
+        "train/explained_variance": 61,
+        "train/value_loss": 61
+      }
+    },
+    {
+      "experiment_id": "upright_slow_bonus",
+      "training_seed": 242,
+      "run_dir": "20261104T182401Z_seed242",
+      "event_file_sha256": "8f43cd0c386ad7722a979e516c390a937be3f50dc83270e129b267e38e3ae5fa",
+      "points_per_tag": {
+        "rollout/ep_rew_mean": 62,
+        "rollout/ep_len_mean": 62,
+        "train/approx_kl": 61,
+        "train/clip_fraction": 61,
+        "train/entropy_loss": 61,
+        "train/explained_variance": 61,
+        "train/value_loss": 61
+      }
+    },
+    {
+      "experiment_id": "potential_shaping",
+      "training_seed": 42,
+      "run_dir": "20261103T220904Z_seed42",
+      "event_file_sha256": "ebd56c16827081621a3f52dbe5b4e176097afcd3f1e5a6ef755705af0b8e3844",
+      "points_per_tag": {
+        "rollout/ep_rew_mean": 62,
+        "rollout/ep_len_mean": 62,
+        "train/approx_kl": 61,
+        "train/clip_fraction": 61,
+        "train/entropy_loss": 61,
+        "train/explained_variance": 61,
+        "train/value_loss": 61
+      }
+    },
+    {
+      "experiment_id": "potential_shaping",
+      "training_seed": 142,
+      "run_dir": "20261103T222742Z_seed142",
+      "event_file_sha256": "01b671c41733b883ab242224958d2e4e21037772835d6c3db2502f4ad36615ec",
+      "points_per_tag": {
+        "rollout/ep_rew_mean": 62,
+        "rollout/ep_len_mean": 62,
+        "train/approx_kl": 61,
+        "train/clip_fraction": 61,
+        "train/entropy_loss": 61,
+        "train/explained_variance": 61,
+        "train/value_loss": 61
+      }
+    },
+    {
+      "experiment_id": "potential_shaping",
+      "training_seed": 242,
+      "run_dir": "20261104T183327Z_seed242",
+      "event_file_sha256": "a063b60bcf3d0ed8848e8bb243c9ae1d4a038b40156c331a7f431ca1fba27c2d",
+      "points_per_tag": {
+        "rollout/ep_rew_mean": 62,
+        "rollout/ep_len_mean": 62,
+        "train/approx_kl": 61,
+        "train/clip_fraction": 61,
+        "train/entropy_loss": 61,
+        "train/explained_variance": 61,
+        "train/value_loss": 61
+      }
+    }
+  ],
+  "python": "3.12.5",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "gymnasium": "1.4.0",
+    "Box2D": "2.3.10",
+    "stable-baselines3": "2.9.2",
+    "torch": "2.15.0",
+    "numpy": "2.5.4",
+    "tensorboard": "2.21.0",
+    "moviepy": "2.2.1",
+    "pillow": "11.3.0",
+    "PyYAML": "6.0.3"
+  },
+  "source": {
+    "commit": "82eab58c3f4883b2f61670c5f536574f69056d89",
+    "dirty": false,
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked": []
+  },
+  "argv": [
+    "scripts\\extract_ppo_diagnostics.py",
+    "--comparison",
+    "results\\phase05\\comparison.json",
+    "--output",
+    "results\\phase07\\ppo_diagnostics.csv"
+  ]
+}

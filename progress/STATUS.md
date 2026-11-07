@@ -7,7 +7,10 @@
   approval
 - Commits:
   - `origin/main` is at `31d02ca` (Phase 06 3/3; pushed by the user).
-  - The Phase 07 commit is local on `main`, not pushed.
+  - The Phase 07 commit (`68280d8`) is local on `main`, not pushed.
+  - Post-release README metrics work (D-047, D-048): `82eab58` (code)
+    and "Post-release (2/2)" (results and docs), local, not pushed. See
+    `progress/handoffs/2026-11-07-post-release-metrics.md`.
 - Phase 07 verification:
   - clean install from a fresh clone and venv passed (337 tests, static
     checks, byte-identical figures);
@@ -30,6 +33,6 @@
 | 06 | Visualization and analysis | Complete |
 | 07 | GitHub publication | Complete |
 
-Latest handoff: `progress/handoffs/2026-11-07-phase-07.md`
+Latest handoff: `progress/handoffs/2026-11-07-post-release-metrics.md`
 
 Update this file only with verified repository evidence.

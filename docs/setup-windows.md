@@ -74,8 +74,9 @@ passes. Expected results:
 - `check_environment.py` prints one `[OK]` line per check and ends with
   `All checks passed.`; `$LASTEXITCODE` is then `0`. Any `[FAIL]` line names
   the failing import or call.
-- `pytest` reports every test passed: `10 passed` at Phase 00, and 337 at
-  Phase 07. The upstream Box2D SWIG binding emits
+- `pytest` reports every test passed: `10 passed` at Phase 00, 337 at
+  Phase 07, and 341 after the PPO-diagnostics
+  addition. The upstream Box2D SWIG binding emits
   `DeprecationWarning`s on import; `pytest.ini` ignores exactly those two
   message patterns. Do not run the suite with a blanket
   `-W error::DeprecationWarning`: Box2D then crashes the interpreter on import

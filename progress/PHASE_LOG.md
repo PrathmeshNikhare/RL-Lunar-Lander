@@ -238,3 +238,20 @@ For each phase, append:
   checks", a local commit on `main`. Pushing to `origin` needs separate
   approval.
 - **Handoff:** `progress/handoffs/2026-11-07-phase-07.md`
+
+---
+
+## 2026-11-07 — post-release README metrics (outside the phase plan)
+
+- **Request:** the owner asked to remove two README sections and add
+  evaluation, training-progress and PPO training metrics (D-047, D-048).
+- **Files changed:** see `progress/handoffs/2026-11-07-post-release-metrics.md`.
+- **Checks:**
+  - pytest 341 passed; ruff and `mypy --strict` clean.
+  - The README numbers are cross-checked against the committed results.
+- **Specialist review:**
+  - Experiment Analyst REVISE.
+  - Documentation Reviewer REVISE.
+  - All findings fixed.
+- **Git checkpoint:** the user approved the commit ("commit"): `82eab58` (code),
+  then "Post-release (2/2)" (results, README, docs, progress). Local, not pushed.
