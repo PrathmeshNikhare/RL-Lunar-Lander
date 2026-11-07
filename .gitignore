@@ -19,3 +19,7 @@ results/raw/
 *.zip
 .DS_Store
 Thumbs.db
+.env
+.vscode/
+.idea/
+.claude/settings.local.json
